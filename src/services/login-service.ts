@@ -19,6 +19,8 @@ class LoginService extends BaseService {
         }
       })
 
+      Cookies.set("type", "web", { expires: Number(data.expirationTimeAccessToken) })
+
       return data
     })
 
