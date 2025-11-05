@@ -1,11 +1,11 @@
 import React from "react"
-import { componentSelector } from "../utils/helpers/component-selector"
+import { componentSelector } from "react-component-selector"
 
 const hrefVariations = {
     default: (props: React.HTMLAttributes<HTMLDivElement>) =>
         <div {...props} className=" text-md flex gap-3 items-center" />
 }
 
-const SidebarHref = componentSelector<keyof typeof hrefVariations, React.HTMLAttributes<HTMLDivElement>>(hrefVariations)
+const SidebarHref = componentSelector<keyof typeof hrefVariations, React.HTMLAttributes<HTMLDivElement>, "className">(hrefVariations)
 
 export default SidebarHref

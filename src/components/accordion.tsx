@@ -1,6 +1,6 @@
 import React from "react"
-import AccordionContainer, { IAccordionContainerProps } from '../base-components/accordion'
-import { componentSelector } from "../utils/helpers/component-selector"
+import { IAccordionContainerProps, AccordionContainer } from 'react-base-components'
+import { componentSelector } from "react-component-selector"
 
 const AccordionVariations = {
     default: (props: IAccordionContainerProps, ref: any) => {
@@ -21,6 +21,6 @@ const AccordionVariations = {
     }
 }
 
-const Accordion = componentSelector<keyof typeof AccordionVariations, IAccordionContainerProps>(AccordionVariations)
+const Accordion = componentSelector<keyof typeof AccordionVariations, IAccordionContainerProps, "className">(AccordionVariations)
 
 export default Accordion

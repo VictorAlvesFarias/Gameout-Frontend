@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LoaderCircle, LockOpen, LucideCheck } from 'lucide-react'
-import { AuthContext } from '../../../auth/auth-context'
+import { AuthContext } from 'react-toolkit'
 import Form from '../../../components/Form';
 import Button from '../../../components/button';
 import InputRoot from '../../../components/input-root'
@@ -13,7 +13,8 @@ import Label from '../../../components/label'
 import InputText from '../../../components/input-text'
 import Section from '../../../components/section'
 import Checkbox from '../../../components/checkbox'
-import { useQuery } from '../../../utils/hooks/query-hooks'
+import { useQuery } from 'react-toolkit'
+import { loginService } from '../../../services/login-service'
 
 interface LoginSchema {
   accessKey: string
@@ -21,27 +22,39 @@ interface LoginSchema {
 }
 
 function Login() {
-  const [rememberMe, setRememberMe] = useState(localStorage.getItem("remember-me") === "true")
+  const [rememberMe, setRemeberMe] = useState(localStorage.getItem("remember-me") == "true")
   const context = useContext(AuthContext)
   const [finished, setQueries] = useQuery(true)
+  const navigation = useNavigate()
 
-  const loginSchema = z.object({
-    accessKey: z.string().nonempty("Required"),
-    password: z.string().nonempty("Required"),
+  const [loading, setLoading] = useState({
+    login: false
   })
 
-  const { register, control, formState, handleSubmit } = useForm<LoginSchema>(
+  const loginSchema = z.object({
+    accessKey: z.string().nonempty("Campo Obrigatório").email("E-Mail Inválido"),
+    password: z.string().nonempty("Campo Obrigatório"),
+  })
+
+  const { register, control, formState, handleSubmit, watch } = useForm<LoginSchema>(
     {
       resolver: zodResolver(loginSchema),
     }
   );
 
-  function handleSignIn(data: any) {
-    return setQueries(() => context.signIn(data))
+  function handleSingIn(data: any) {
+    setLoading({ ...loading, login: true })
+
+    return loginService.loginPost(data)
+      .then(() => {
+        setLoading({ ...loading, login: false })
+        context.setIsAuthenticated?.(true)
+        navigation('/home')
+      })
   }
 
   function handleSetRememberMe() {
-    setRememberMe(!rememberMe)
+    setRemeberMe(!rememberMe)
     localStorage.setItem("remember-me", String(!rememberMe))
   }
 
@@ -54,7 +67,7 @@ function Login() {
             <h1 className='font-semibold text-3xl '>Gameoutd</h1>
           </div>
           <div className='flex flex-col bg-main-black-800 shadow-sm rounded sm:px-9 px-6 py-9 sm:w-fit w-full'>
-            <Form onSubmit={handleSubmit(handleSignIn)}>
+            <Form onSubmit={handleSubmit(handleSingIn)}>
               <h1 className='font-semibold text-2xl'>Welcome</h1>
               <InputRoot>
                 <Label>E-Mail</Label>
@@ -83,7 +96,7 @@ function Login() {
           </div>
         </div>
       </Section>
-    </section>
+    </section >
   )
 }
 

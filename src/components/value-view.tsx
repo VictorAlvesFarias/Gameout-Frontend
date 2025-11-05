@@ -1,4 +1,4 @@
-import { componentSelector } from "../utils/helpers/component-selector"
+import { componentSelector } from "react-component-selector"
 import React from 'react'
 
 const valueViewVariants = {
@@ -9,6 +9,6 @@ const valueViewVariants = {
     }
 }
 
-const ValueView = componentSelector<keyof typeof valueViewVariants, React.HTMLAttributes<HTMLDivElement>>(valueViewVariants)
+const ValueView = componentSelector<keyof typeof valueViewVariants, React.HTMLAttributes<HTMLDivElement>, "className">(valueViewVariants)
 
 export default ValueView

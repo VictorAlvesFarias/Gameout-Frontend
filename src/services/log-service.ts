@@ -1,8 +1,9 @@
+import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
 import { env } from "../environment";
-import { BaseService } from "./base-service";
-import { IBaseResponseApi } from "../interfaces/shared/base-response-api";
+import { AUTH } from "../config/auth-config";
+import { toast } from "react-toastify";
 
-export enum AppFileActionType {
+enum AppFileActionType {
     InsertFile = 0,
     UpdateFile = 1,
     DeleteFile = 2,
@@ -15,7 +16,7 @@ export enum AppFileActionType {
     ProcessingFailed = 9
 }
 
-export interface IAppFileLog {
+interface IAppFileLog {
     id: number;
     appFileId?: number;
     appStoredFileId?: number;
@@ -29,7 +30,7 @@ export interface IAppFileLog {
     userId: string;
 }
 
-export interface IAppFileLogFilter {
+interface IAppFileLogFilter {
     appFileId?: number;
     appStoredFileId?: number;
     storedFileId?: number;
@@ -41,30 +42,48 @@ export interface IAppFileLogFilter {
     pageSize?: number;
 }
 
-class LogService extends BaseService {
+class LogService extends BaseHttpService {
+    constructor() {
+        super(() => ({
+            config: () => ({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': AUTH.DEFAULT_AUTHORIZATION_TOKEN()
+                },
+            }),
+            catch: (error) => {
+                catchErrors(error, (e, m) => {
+                    toast.error(m)
+                })
+
+                return error
+            }
+        }))
+    }
+
     public async getAll(filters?: IAppFileLogFilter) {
-        const response = await this.get<IBaseResponseApi<IAppFileLog[]>>({ 
-            api: env, 
-            href: "/api/AppFileLog", 
-            params: filters 
+        const response = await this.get<IBaseHttpResponseApi<IAppFileLog[]>>({
+            api: env,
+            href: "/api/AppFileLog",
+            params: filters
         });
         return response;
     }
 
     public async getByFile(appFileId: number, page: number = 1, pageSize: number = 50) {
-        const response = await this.get<IBaseResponseApi<IAppFileLog[]>>({ 
-            api: env, 
-            href: `/api/AppFileLog/by-file/${appFileId}`, 
-            params: { page, pageSize } 
+        const response = await this.get<IBaseHttpResponseApi<IAppFileLog[]>>({
+            api: env,
+            href: `/api/AppFileLog/by-file/${appFileId}`,
+            params: { page, pageSize }
         });
         return response;
     }
 
     public async getByAction(actionType: AppFileActionType, page: number = 1, pageSize: number = 50) {
-        const response = await this.get<IBaseResponseApi<IAppFileLog[]>>({ 
-            api: env, 
-            href: `/api/AppFileLog/by-action/${actionType}`, 
-            params: { page, pageSize } 
+        const response = await this.get<IBaseHttpResponseApi<IAppFileLog[]>>({
+            api: env,
+            href: `/api/AppFileLog/by-action/${actionType}`,
+            params: { page, pageSize }
         });
         return response;
     }
@@ -76,5 +95,6 @@ export {
     LogService,
     logService,
     IAppFileLog,
-    IAppFileLogFilter
+    IAppFileLogFilter,
+    AppFileActionType
 };

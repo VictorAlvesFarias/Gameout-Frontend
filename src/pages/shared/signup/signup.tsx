@@ -4,16 +4,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from 'react-router-dom';
 import { LockOpen, ShieldCheck, LoaderCircle } from 'lucide-react';
-import Form from '../../../components/form';
 import Button from '../../../components/button';
 import InputRoot from '../../../components/input-root';
-import Span from '../../../components/span';
+import { useQuery } from 'react-toolkit';
 import Label from '../../../components/label';
 import InputText from '../../../components/input-text';
 import Section from '../../../components/section';
 import { signupService } from '../../../services/signup-service';
-import { useQuery } from '../../../utils/hooks/query-hooks';
 import { USER_ROUTES } from '../../../config/routes-config';
+import Span from '../../../components/Span';
+import Form from '../../../components/Form';
 
 interface SignupSchema {
   name: string;
@@ -22,7 +22,7 @@ interface SignupSchema {
   email: string;
   phone: string;
   password: string;
-  confirmPassword: string;
+  passwordConfirm: string;
 }
 
 function Signup() {
@@ -37,9 +37,9 @@ function Signup() {
     email: z.string().nonempty("Required").email("Invalid E-Mail"),
     phone: z.string().nonempty("Required"),
     password: z.string().nonempty("Required"),
-    confirmPassword: z.string().nonempty("Required")
-  }).refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
+    passwordConfirm: z.string().nonempty("Required")
+  }).refine((data) => data.password === data.passwordConfirm, {
+    path: ["passwordConfirm"],
     message: "Passwords do not match",
   });
 
@@ -104,8 +104,8 @@ function Signup() {
                 </div>
                 <InputRoot>
                   <Label>Confirm Password</Label>
-                  <InputText placeholder='Confirm Password' type="password" {...register('confirmPassword')} />
-                  <Span variation='error'>{formState.errors.confirmPassword?.message}</Span>
+                  <InputText placeholder='Confirm Password' type="password" {...register('passwordConfirm')} />
+                  <Span variation='error'>{formState.errors.passwordConfirm?.message}</Span>
                 </InputRoot>
                 <Button loadingComponent={<LoaderCircle className="rotating-div" />} variation='default' loading={!finished}>
                   Create Account

@@ -3,14 +3,13 @@ import { LoaderCircle, Clock, FileText, RefreshCcw, AlertCircle, RotateCcw, Tras
 import Span from '../../../components/Span'
 import Button from '../../../components/button'
 import InputText from '../../../components/input-text'
-import Accordion from '../../../components/Accordion'
+import Accordion from '../../../components/accordion'
 import AccordionRoot from '../../../components/accordion-root'
-import AccordionTitle from '../../../base-components/accordion-title'
-import AccordionContext from '../../../base-components/accordion-context'
-import { useQuery } from '../../../utils/hooks/query-hooks'
+import { AccordionTitleContainer } from "react-base-components"
+import { AccordionContext } from "react-base-components"
+import { useQuery } from "react-toolkit"
 import { IAppStoredFile, saveService } from '../../../services/save-service'
 import { toast } from 'react-toastify'
-import { cookiesService } from '../../../services/cookies-service'
 import { webSocketService } from '../../../services/web-socket-service'
 import AppFileItem from '../../../containers/app-file-item'
 import Div from '../../../components/div'
@@ -156,7 +155,7 @@ function InProcessing() {
                 <AccordionContext>
                   <AccordionRoot>
                     <div className='rounded flex justify-between items-center hover:bg-zinc-800 border border-zinc-700'>
-                      <AccordionTitle className="w-full h-full flex items-center cursor-pointer text-sm text-white">
+                      <AccordionTitleContainer className="w-full h-full flex items-center cursor-pointer text-sm text-white">
                         <Div variation='accordion-content'>
                           <AppFileItem
                             name={x.name}
@@ -167,7 +166,7 @@ function InProcessing() {
                             status={x.error ? "error" : !x.processing ? "success" : "warning"}
                           />
                         </Div>
-                      </AccordionTitle>
+                      </AccordionTitleContainer>
                     </div>
                     <Accordion variation='default'>
                       <Div variation='accordion-content'>

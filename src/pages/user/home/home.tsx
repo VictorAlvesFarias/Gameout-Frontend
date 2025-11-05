@@ -5,17 +5,16 @@ import Form from '../../../components/Form';
 import InputRoot from '../../../components/input-root';
 import InputText from '../../../components/input-text';
 import Span from '../../../components/Span';
-import Accordion from '../../../components/Accordion';
+import Accordion from "../../../components/accordion";
 import AccordionRoot from '../../../components/accordion-root';
 import AccordionTitle from '../../../components/accordion-title';
-import AccordionContext from '../../../base-components/accordion-context';
+import { AccordionContext } from "react-base-components";
 import Checkbox from '../../../components/checkbox';
 import Label from '../../../components/label';
-import { useQuery } from '../../../utils/hooks/query-hooks';
-import ModalContext, { IModalController } from '../../../base-components/modal-context';
+import { useQuery } from "react-toolkit";
+import { ModalContext } from "react-base-components";
 import ModalRoot from '../../../components/modal-root';
-import ModalClose from '../../../base-components/modal-close';
-import { useModal } from '../../../utils/hooks/modal-hooks';
+import { ModalClose } from "react-base-components";
 import { IAppFile, IAppStoredFile, IStoredFile, saveService } from '../../../services/save-service';
 import { useNavigate } from 'react-router-dom';
 import { USER_ROUTES } from '../../../config/routes-config';
@@ -31,7 +30,7 @@ function Home() {
   const [filter, setFilter] = useState<string>("")
   const [allRequestsResolved, setQuery] = useQuery(false)
   const [currentFileId, setCurrentFileId] = useState<number>(0)
-  const { modalRef, openModal, closeModal } = useModal()
+  const modalRef = useRef<any>(null)
   const navigation = useNavigate()
 
   function handleFilter(e: any) {
@@ -80,7 +79,7 @@ function Home() {
     return saveService.getStoredFiles({ idAppFile }).then(e => {
       setStoredFiles(e.data)
       setCurrentFileId(idAppFile)
-      openModal()
+      modalRef.current?.open()
     })
   }
 

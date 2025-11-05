@@ -1,5 +1,5 @@
 import React from "react"
-import { componentSelector } from "../utils/helpers/component-selector"
+import { componentSelector } from "react-component-selector"
 
 const labelVariations = {
     default: (props: React.HTMLAttributes<HTMLLabelElement>) =>
@@ -8,6 +8,6 @@ const labelVariations = {
         <label {...props} className='font-semibold px-1 text-zinc-500 text-sm' />,
 }
 
-const Label =  componentSelector<keyof typeof labelVariations, React.HTMLAttributes<HTMLLabelElement>>(labelVariations)
+const Label =  componentSelector<keyof typeof labelVariations, React.HTMLAttributes<HTMLLabelElement>, "className">(labelVariations)
 
 export default Label

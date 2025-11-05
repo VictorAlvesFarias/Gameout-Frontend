@@ -1,4 +1,4 @@
-import { componentSelector } from "../utils/helpers/component-selector"
+import { componentSelector } from "react-component-selector"
 import React from "react"
 
 const rootVariations = {
@@ -6,6 +6,6 @@ const rootVariations = {
         <table {...props} className=" divide-y h-fit divide-black divide-opacity-10" />
 }
 
-const TableRoot = componentSelector<keyof typeof rootVariations, React.HTMLAttributes<HTMLTableElement>>(rootVariations)
+const TableRoot = componentSelector<keyof typeof rootVariations, React.HTMLAttributes<HTMLTableElement>, "className">(rootVariations)
 
 export default TableRoot

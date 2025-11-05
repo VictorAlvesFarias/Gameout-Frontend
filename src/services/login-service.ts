@@ -1,14 +1,35 @@
 import axios from "axios";
 import { env } from "../environment";
-import { BaseService } from "./base-service";
+import { BaseHttpService, catchErrors } from "typescript-toolkit";
+import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 
-class LoginService extends BaseService {
-  public async loginPost(req: any) {
-    const result = this.post<any>({ api: env, href: "/sign-in", params: {} }, req).then(({ data }) => {
-      const keys = Object.keys(data)
+class LoginService extends BaseHttpService {
+  constructor() {
+    super(() => ({
+      config: () => ({
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('accessToken') ?? ''}`
+        },
+      }),
+      catch: (error) => {
+        catchErrors(error, (e, m) => {
+          toast.error(m)
+        })
 
-      console.log(data)
+        return error
+      }
+    }))
+  }
+
+  public async loginPost(data: { accessKey: string; password: string; }) {
+    const result = this.post<any>({ api: env, href: "/sign-in", params: {} }, {
+      accessKey: data.accessKey,
+      password: data.password
+    }).then(({ data }) => {
+
+      const keys = Object.keys(data)
 
       keys.forEach(e => {
         if (typeof data[e] == "object") {
@@ -19,8 +40,6 @@ class LoginService extends BaseService {
         }
       })
 
-      Cookies.set("type", "web", { expires: Number(data.expirationTimeAccessToken) })
-
       return data
     })
 
@@ -28,6 +47,7 @@ class LoginService extends BaseService {
   }
   public logout() {
     const keys = Object.keys(Cookies.get())
+
     keys.forEach(e => {
       Cookies.remove(e)
     })

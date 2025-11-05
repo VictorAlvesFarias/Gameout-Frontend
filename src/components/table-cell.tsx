@@ -1,5 +1,5 @@
 import React from "react"
-import { componentSelector } from "../utils/helpers/component-selector"
+import { componentSelector } from "react-component-selector"
 
 const headVariations = {
   default: (props: React.HTMLAttributes<HTMLTableCellElement>) =>
@@ -14,6 +14,6 @@ const headVariations = {
     <td {...props} className="px-6 py-4 whitespace-nowrap text-sm text-white flex justify-end" />
 }
 
-const TableCell = componentSelector<keyof typeof headVariations, React.HTMLAttributes<HTMLTableCellElement>>(headVariations)
+const TableCell = componentSelector<keyof typeof headVariations, React.HTMLAttributes<HTMLTableCellElement>, "className">(headVariations)
 
 export default TableCell

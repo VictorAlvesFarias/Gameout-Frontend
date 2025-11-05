@@ -1,7 +1,8 @@
 import axios from "axios";
 import { env } from "../environment";
-import { BaseService } from "./base-service";
-import { IBaseResponseApi } from "../interfaces/shared/base-response-api";
+import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
+import { toast } from "react-toastify";
+import { AUTH } from "../config/auth-config";
 
 interface IAppFile {
     name: string;
@@ -43,15 +44,33 @@ interface IAppStoredFile {
     sizeInBytes: number
 }
 
-class SaveService extends BaseService {
+class SaveService extends BaseHttpService {
+    constructor() {
+        super(() => ({
+            config: () => ({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': AUTH.DEFAULT_AUTHORIZATION_TOKEN()
+                },
+            }),
+            catch: (error) => {
+                catchErrors(error, (e, m) => {
+                    toast.error(m)
+                })
+
+                return error
+            }
+        }))
+    }
+
     public async add(data: IAppFile) {
-        const result = this.post<IBaseResponseApi<IAppFile>>({ api: env, href: "/upload-file" }, data)
+        const result = this.post<IBaseHttpResponseApi<IAppFile>>({ api: env, href: "/upload-file" }, data)
 
         return result;
     }
 
     public async update(data: IAppFile, id: number) {
-        const result = this.put<IBaseResponseApi<IAppFile>>({ api: env, href: "/update-file", params: { id: id } }, data)
+        const result = this.put<IBaseHttpResponseApi<IAppFile>>({ api: env, href: "/update-file", params: { id: id } }, data)
 
         return result;
     }
@@ -75,22 +94,22 @@ class SaveService extends BaseService {
     }
 
     public async getAll() {
-        const response = await this.get<IBaseResponseApi<IAppFile[]>>({ api: env, href: "/get-files" })
+        const response = await this.get<IBaseHttpResponseApi<IAppFile[]>>({ api: env, href: "/get-files" })
         return response
     }
 
     public async getStoredFiles(params: any) {
-        const response = await this.get<IBaseResponseApi<IAppStoredFile[]>>({ api: env, href: "/get-stored-files", params: params })
+        const response = await this.get<IBaseHttpResponseApi<IAppStoredFile[]>>({ api: env, href: "/get-stored-files", params: params })
         return response
     }
 
     public async singleSync(idAppFile: number) {
-        const response = await this.post<IBaseResponseApi<any>>({ api: env, href: "/single-sync", params: { idAppFile } }, {})
+        const response = await this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/single-sync", params: { idAppFile } }, {})
         return response
     }
 
     public async getById(params: any) {
-        const response = await this.get<IBaseResponseApi<IAppFile>>({ api: env, href: "/get-email-address-by-id", params: params })
+        const response = await this.get<IBaseHttpResponseApi<IAppFile>>({ api: env, href: "/get-email-address-by-id", params: params })
         return response
     }
 
@@ -110,22 +129,22 @@ class SaveService extends BaseService {
     }
 
     public async reprocessFile(appStoredFileId: number) {
-        const response = await this.post<IBaseResponseApi<any>>({ api: env, href: "/reprocess-file", params: { appStoredFileId } }, {})
+        const response = await this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/reprocess-file", params: { appStoredFileId } }, {})
         return response
     }
 
     public async deleteFileWithError(appStoredFileId: number) {
-        const response = await this.delete<IBaseResponseApi<any>>({ api: env, href: "/delete-file-with-error", params: { appStoredFileId } })
+        const response = await this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-file-with-error", params: { appStoredFileId } })
         return response
     }
 
     public async checkProcessingStatus(appStoredFileId: number) {
-        const response = await this.get<IBaseResponseApi<any>>({ api: env, href: "/check-processing-status", params: { appStoredFileId } })
+        const response = await this.get<IBaseHttpResponseApi<any>>({ api: env, href: "/check-processing-status", params: { appStoredFileId } })
         return response
     }
 
     public async validateStatus(appFileId: number) {
-        const response = await this.get<IBaseResponseApi<any>>({ api: env, href: "/validate-status", params: { appFileId } })
+        const response = await this.get<IBaseHttpResponseApi<any>>({ api: env, href: "/validate-status", params: { appFileId } })
         return response
     }
 }
