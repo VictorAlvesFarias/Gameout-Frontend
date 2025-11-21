@@ -140,124 +140,119 @@ function Home() {
   }, [])
 
   return (
-    <>
-      <div className='w-full h-full flex'>
-        <div className='p-3 flex-[1] bg-zinc-900 bg-opacity-50 h-full flex flex-col'>
-          <div className='flex gap-3 items-center '>
-            <InputText onChange={handleFilter} type="text" placeholder='Search saves' variation='ultra-rounded' />
-            <div className='flex-1 justify-end flex'>
-              <Button onClick={handleGetSaves} >Verify</Button>
-            </div>
-          </div>
-          {
-            appFiles?.filter(e => e.name.includes(filter)).length == 0 ?
-              <div className='h-full w-full items-center justify-center flex text-white'>
-                {
-                  allRequestsResolved ? (
-                    <Span>Results not found</Span>
-                  ) : (
-                    <LoaderCircle className='animate-spin' />
-                  )
-                }
-              </div>
-              :
-              <div>
-                {
-                  (
-                    appFiles?.filter(e => e.name.includes(filter)).map((x, i: any) =>
-                      <div key={i} className='pt-6 rounded  flex flex-col relative gap-3'>
-                        <AccordionContext>
-                          <AccordionRoot>
-                            <Div variation='accordion-title-root'>
-                              <AccordionTitle>
-                                <Div variation='accordion-content'>
-                                  <AppFileItem
-                                    name={x.name}
-                                    createDate={x.createDate}
-                                    updateDate={x.updateDate}
-                                    processing={false}
-                                    message={x.synced ? "Synced" : "Unsynced"}
-                                    status={x.synced ? "success" : "error"}
-                                  />
-                                </Div>
-                              </AccordionTitle>
-                              <Span variation='default-accordion-button' onClick={() => handleDeleteSave(x.id.toString())}>
-                                <Trash className='h-5 w-5 text-zinc-500 hover:text-red-500 transition-all' />
-                              </Span>
-                            </Div>
-                            <Accordion>
-                              <Div variation='accordion-content'>
-                                <div className='flex gap-3'>
-                                  <InputRoot>
-                                    <Label>Name</Label>
-                                    <InputText
-                                      variation='default-full'
-                                      value={x.name}
-                                      onChange={(e) => handleUpdate({ name: e.target.value }, x.id)}
-                                      type="text" placeholder='Save path' />
-                                  </InputRoot>
-                                  <InputRoot>
-                                    <Label>Path</Label>
-                                    <InputText
-                                      variation='default-full'
-                                      value={x.path}
-                                      onChange={(e) => handleUpdate({ path: e.target.value }, x.id)}
-                                      type="text" placeholder='Save path' />
-                                  </InputRoot>
-                                </div>
-                                <div className='flex gap-3'>
-                                  <InputRoot variation='checkbox'>
-                                    <Checkbox
-                                      onChange={() => handleUpdate({ versionControl: !x.versionControl }, x.id)}
-                                      checked={x.versionControl}
-                                      value={x.versionControl ?? "false"}
-                                      data="true"
-                                    >
-                                      <Check />
-                                    </Checkbox><Label>Versions</Label>
-                                  </InputRoot>
-                                  <InputRoot variation='checkbox'>
-                                    <Checkbox
-                                      onChange={() => handleUpdate({ observer: !x.observer }, x.id)}
-                                      checked={x.observer}
-                                      value={x.observer ?? "false"}
-                                      data="true"
-                                    >
-                                      <Check />
-                                    </Checkbox><Label>Observer</Label>
-                                  </InputRoot>
-                                  <InputRoot variation='checkbox'>
-                                    <Checkbox
-                                      onChange={() => handleUpdate({ autoValidateSync: !x.autoValidateSync }, x.id)}
-                                      checked={x.autoValidateSync}
-                                      value={x.autoValidateSync ?? "false"}
-                                      data="true"
-                                    >
-                                      <Check />
-                                    </Checkbox><Label>Auto Check Status</Label>
-                                  </InputRoot>
-                                </div>
-                                <div className="flex-1 flex items-end w-full gap-3">
-                                  <div className='w-fit'>
-                                    <Button onClick={() => handleGetStoredFiles(x.id)} variation='modal'>Saves</Button>
-                                  </div>
-                                  <div className='w-fit'>
-                                    <Button onClick={() => handleValidateStatus(x.id)} variation='modal'>Check status</Button>
-                                  </div>
-                                </div>
-                              </Div>
-                            </Accordion>
-                          </AccordionRoot>
-                        </AccordionContext>
-                      </div>
-                    )
-                  )
-                }
-              </div>
-          }
+    <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
+      <div className='flex gap-3 items-center '>
+        <InputText onChange={handleFilter} type="text" placeholder='Search saves' variation='ultra-rounded' />
+        <div className='flex-1 justify-end flex'>
+          <Button onClick={handleGetSaves} >Verify</Button>
         </div>
       </div>
-
+      {
+        appFiles?.filter(e => e.name.includes(filter)).length == 0 ?
+          <div className='h-full w-full items-center justify-center flex text-white'>
+            {
+              allRequestsResolved ? (
+                <Span>Results not found</Span>
+              ) : (
+                <LoaderCircle className='animate-spin' />
+              )
+            }
+          </div>
+          :
+          <div>
+            {
+              (
+                appFiles?.filter(e => e.name.includes(filter)).map((x, i: any) =>
+                  <div key={i} className='pt-6 rounded  flex flex-col relative gap-3'>
+                    <AccordionContext>
+                      <AccordionRoot>
+                        <Div variation='accordion-title-root'>
+                          <AccordionTitle>
+                            <Div variation='accordion-content'>
+                              <AppFileItem
+                                name={x.name}
+                                createDate={x.createDate}
+                                updateDate={x.updateDate}
+                                processing={false}
+                                message={x.synced ? "Synced" : "Unsynced"}
+                                status={x.synced ? "success" : "error"}
+                              />
+                            </Div>
+                          </AccordionTitle>
+                          <Span variation='default-accordion-button' onClick={() => handleDeleteSave(x.id.toString())}>
+                            <Trash className='h-5 w-5 text-zinc-500 hover:text-red-500 transition-all' />
+                          </Span>
+                        </Div>
+                        <Accordion>
+                          <Div variation='accordion-content'>
+                            <div className='flex gap-3'>
+                              <InputRoot>
+                                <Label>Name</Label>
+                                <InputText
+                                  variation='default-full'
+                                  value={x.name}
+                                  onChange={(e) => handleUpdate({ name: e.target.value }, x.id)}
+                                  type="text" placeholder='Save path' />
+                              </InputRoot>
+                              <InputRoot>
+                                <Label>Path</Label>
+                                <InputText
+                                  variation='default-full'
+                                  value={x.path}
+                                  onChange={(e) => handleUpdate({ path: e.target.value }, x.id)}
+                                  type="text" placeholder='Save path' />
+                              </InputRoot>
+                            </div>
+                            <div className='flex gap-3'>
+                              <InputRoot variation='checkbox'>
+                                <Checkbox
+                                  onChange={() => handleUpdate({ versionControl: !x.versionControl }, x.id)}
+                                  checked={x.versionControl}
+                                  value={x.versionControl ?? "false"}
+                                  data="true"
+                                >
+                                  <Check />
+                                </Checkbox><Label>Versions</Label>
+                              </InputRoot>
+                              <InputRoot variation='checkbox'>
+                                <Checkbox
+                                  onChange={() => handleUpdate({ observer: !x.observer }, x.id)}
+                                  checked={x.observer}
+                                  value={x.observer ?? "false"}
+                                  data="true"
+                                >
+                                  <Check />
+                                </Checkbox><Label>Observer</Label>
+                              </InputRoot>
+                              <InputRoot variation='checkbox'>
+                                <Checkbox
+                                  onChange={() => handleUpdate({ autoValidateSync: !x.autoValidateSync }, x.id)}
+                                  checked={x.autoValidateSync}
+                                  value={x.autoValidateSync ?? "false"}
+                                  data="true"
+                                >
+                                  <Check />
+                                </Checkbox><Label>Auto Check Status</Label>
+                              </InputRoot>
+                            </div>
+                            <div className="flex-1 flex items-end w-full gap-3">
+                              <div className='w-fit'>
+                                <Button onClick={() => handleGetStoredFiles(x.id)} variation='modal'>Saves</Button>
+                              </div>
+                              <div className='w-fit'>
+                                <Button onClick={() => handleValidateStatus(x.id)} variation='modal'>Check status</Button>
+                              </div>
+                            </div>
+                          </Div>
+                        </Accordion>
+                      </AccordionRoot>
+                    </AccordionContext>
+                  </div>
+                )
+              )
+            }
+          </div>
+      }
       <ModalContext ref={modalRef}>
         <ModalRoot>
           <div className='shadow-lg  bg-main-black-800  flex flex-col gap-3 rounded text-white'>
@@ -322,7 +317,7 @@ function Home() {
           </div>
         </ModalRoot>
       </ModalContext>
-    </>
+    </Div>
   )
 }
 

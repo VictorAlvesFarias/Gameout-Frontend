@@ -120,127 +120,125 @@ function InProcessing() {
 
 
   return (
-    <div className='w-full h-full flex'>
-      <div className='p-3 flex-[1] bg-zinc-900 bg-opacity-50 h-full flex flex-col overflow-auto'>
-        <div className='flex gap-3 items-center mb-4'>
-          <InputText onChange={handleFilter} type="text" placeholder='Search files in processing' variation='ultra-rounded' />
-          <div className='flex-1 justify-end flex'>
-            <Button onClick={handleGetSaves} variation='default'>
-              Verify
-            </Button>
-          </div>
+    <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
+      <div className='flex gap-3 items-center mb-4'>
+        <InputText onChange={handleFilter} type="text" placeholder='Search files in processing' variation='ultra-rounded' />
+        <div className='flex-1 justify-end flex'>
+          <Button onClick={handleGetSaves} variation='default'>
+            Verify
+          </Button>
         </div>
+      </div>
 
-        {storedFiles.length === 0 ? (
-          <div className='h-full w-full flex justify-center items-center text-white'>
-            {allRequestsResolved ? (
-              <div className='text-center'>
-                <Span>No files in processing</Span>
-              </div>
-            ) : (
-              <LoaderCircle className='animate-spin h-8 w-8' />
-            )}
-          </div>
-        ) : (
-          <div className='space-y-3'>
-            {storedFiles.filter(e =>
-              e.name?.toLowerCase().includes(filter.toLowerCase()) ||
-              e.path?.toLowerCase().includes(filter.toLowerCase()) ||
-              e.id.toString().includes(filter) ||
-              e.appFileId.toString().includes(filter) ||
-              (e.storedFileId && e.storedFileId.toString().includes(filter)) ||
-              (e as any).error?.toLowerCase().includes(filter.toLowerCase())
-            ).map((x, i) => (
-              <div key={i} className='pt-3 rounded flex flex-col relative gap-3'>
-                <AccordionContext>
-                  <AccordionRoot>
-                    <div className='rounded flex justify-between items-center hover:bg-zinc-800 border border-zinc-700'>
-                      <AccordionTitleContainer className="w-full h-full flex items-center cursor-pointer text-sm text-white">
-                        <Div variation='accordion-content'>
-                          <AppFileItem
-                            name={x.name}
-                            createDate={x.createDate}
-                            updateDate={x.updateDate}
-                            processing={x.processing}
-                            message={x.error ? `Error: ${x.message || 'Unknown error'}` : !x.processing ? "Completed" : "Processing"}
-                            status={x.error ? "error" : !x.processing ? "success" : "warning"}
-                          />
-                        </Div>
-                      </AccordionTitleContainer>
-                    </div>
-                    <Accordion variation='default'>
+      {storedFiles.length === 0 ? (
+        <div className='h-full w-full flex justify-center items-center text-white'>
+          {allRequestsResolved ? (
+            <div className='text-center'>
+              <Span>No files in processing</Span>
+            </div>
+          ) : (
+            <LoaderCircle className='animate-spin h-8 w-8' />
+          )}
+        </div>
+      ) : (
+        <div className='space-y-3'>
+          {storedFiles.filter(e =>
+            e.name?.toLowerCase().includes(filter.toLowerCase()) ||
+            e.path?.toLowerCase().includes(filter.toLowerCase()) ||
+            e.id.toString().includes(filter) ||
+            e.appFileId.toString().includes(filter) ||
+            (e.storedFileId && e.storedFileId.toString().includes(filter)) ||
+            (e as any).error?.toLowerCase().includes(filter.toLowerCase())
+          ).map((x, i) => (
+            <div key={i} className='pt-3 rounded flex flex-col relative gap-3'>
+              <AccordionContext>
+                <AccordionRoot>
+                  <div className='rounded flex justify-between items-center hover:bg-zinc-800 border border-zinc-700'>
+                    <AccordionTitleContainer className="w-full h-full flex items-center cursor-pointer text-sm text-white">
                       <Div variation='accordion-content'>
-                        <Div variation='accordion-content-grid'>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>File Path:</span>
-                            <p className='text-sm text-white mt-1 break-all'>{x.path || 'N/A'}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>File Name:</span>
-                            <p className='text-sm text-white mt-1'>{x.name}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>App File ID:</span>
-                            <p className='text-sm text-white mt-1'>{x.appFileId}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>App Stored File ID:</span>
-                            <p className='text-sm text-white mt-1'>{x.id}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Created:</span>
-                            <p className='text-sm text-white mt-1'>{formatDate(x.createDate)}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Updated:</span>
-                            <p className='text-sm text-white mt-1'>{formatDate(x.updateDate)}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Stored File ID:</span>
-                            <p className='text-sm text-white mt-1'>{x.storedFileId || 'Not assigned'}</p>
-                          </div>
-                        </Div>
-
-                        {(x.error) && (
-                          <div>
-                            <span className='text-sm font-semibold text-red-400 flex items-center gap-2'>
-                              <AlertCircle className='h-4 w-4' />
-                              Error Message: {x.message}
-                            </span>
-                            <p className='text-sm text-red-300 mt-1 bg-red-900 bg-opacity-20 p-2 rounded'>
-                              {x.error}
-                            </p>
-                          </div>
-                        )}
-
-                        <div className='flex gap-3 flex-wrap'>
-                          <Button onClick={() => handleCheckProcessingStatus(x.id)} variation='modal'>
-                            Check Status
-                          </Button>
-
-                          {x.error && (
-                            <>
-                              <Button variation='modal' onClick={() => handleReprocessFile(x.id)}>
-                                Reprocess
-                              </Button>
-                              <div className='w-fit'>
-                                <Button variation='red' onClick={() => handleDeleteFileWithError(x.id)}>
-                                  Cancel
-                                </Button>
-                              </div>
-                            </>
-                          )}
+                        <AppFileItem
+                          name={x.name}
+                          createDate={x.createDate}
+                          updateDate={x.updateDate}
+                          processing={x.processing}
+                          message={x.error ? `Error: ${x.message || 'Unknown error'}` : !x.processing ? "Completed" : "Processing"}
+                          status={x.error ? "error" : !x.processing ? "success" : "warning"}
+                        />
+                      </Div>
+                    </AccordionTitleContainer>
+                  </div>
+                  <Accordion variation='default'>
+                    <Div variation='accordion-content'>
+                      <Div variation='accordion-content-grid'>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>File Path:</span>
+                          <p className='text-sm text-white mt-1 break-all'>{x.path || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>File Name:</span>
+                          <p className='text-sm text-white mt-1'>{x.name}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>App File ID:</span>
+                          <p className='text-sm text-white mt-1'>{x.appFileId}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>App Stored File ID:</span>
+                          <p className='text-sm text-white mt-1'>{x.id}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>Created:</span>
+                          <p className='text-sm text-white mt-1'>{formatDate(x.createDate)}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>Updated:</span>
+                          <p className='text-sm text-white mt-1'>{formatDate(x.updateDate)}</p>
+                        </div>
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300'>Stored File ID:</span>
+                          <p className='text-sm text-white mt-1'>{x.storedFileId || 'Not assigned'}</p>
                         </div>
                       </Div>
-                    </Accordion>
-                  </AccordionRoot>
-                </AccordionContext>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+
+                      {(x.error) && (
+                        <div>
+                          <span className='text-sm font-semibold text-red-400 flex items-center gap-2'>
+                            <AlertCircle className='h-4 w-4' />
+                            Error Message: {x.message}
+                          </span>
+                          <p className='text-sm text-red-300 mt-1 bg-red-900 bg-opacity-20 p-2 rounded'>
+                            {x.error}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className='flex gap-3 flex-wrap'>
+                        <Button onClick={() => handleCheckProcessingStatus(x.id)} variation='modal'>
+                          Check Status
+                        </Button>
+
+                        {x.error && (
+                          <>
+                            <Button variation='modal' onClick={() => handleReprocessFile(x.id)}>
+                              Reprocess
+                            </Button>
+                            <div className='w-fit'>
+                              <Button variation='red' onClick={() => handleDeleteFileWithError(x.id)}>
+                                Cancel
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </Div>
+                  </Accordion>
+                </AccordionRoot>
+              </AccordionContext>
+            </div>
+          ))}
+        </div>
+      )}
+    </Div>
   )
 }
 

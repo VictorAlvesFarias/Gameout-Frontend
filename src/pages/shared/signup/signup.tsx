@@ -14,6 +14,7 @@ import { signupService } from '../../../services/signup-service';
 import { USER_ROUTES } from '../../../config/routes-config';
 import Span from '../../../components/Span';
 import Form from '../../../components/Form';
+import Div from '../../../components/div';
 
 interface SignupSchema {
   name: string;
@@ -54,83 +55,93 @@ function Signup() {
   }
 
   return (
-    <section className="min-h-screen flex-col text-white w-full flex items-center justify-center gap-6 bg-gradient-to-t from-main-black-800 to-main-black-900 p-3">
-      <Section>
-        <div className='flex items-center justify-center gap-6 flex-col'>
-          <div className='flex gap-3 items-center mb-3'>
-            <LockOpen className='w-9 h-9 text-main-violet-500' />
-            <h1 className='font-semibold text-3xl'>Gameoutd</h1>
-          </div>
-          {!success ? (
-            <div className='gap-3 flex flex-col bg-main-black-800 shadow-sm rounded sm:px-12 px-6 py-12 sm:w-fit w-full'>
-              <Form onSubmit={handleSubmit((data) => setQueries(() => handleSignUp(data)))}>
-                <h1 className='font-semibold text-2xl'>Create Account</h1>
-                <InputRoot>
-                  <Label>Name</Label>
-                  <InputText placeholder='Name' {...register('name')} />
-                  <Span variation='error'>{formState.errors.name?.message}</Span>
-                </InputRoot>
-                <InputRoot>
-                  <Label>Last Name</Label>
-                  <InputText placeholder='Last Name' {...register('lastName')} />
-                  <Span variation='error'>{formState.errors.lastName?.message}</Span>
-                </InputRoot>
-                <InputRoot>
-                  <Label>Username</Label>
-                  <InputText placeholder='Username' {...register('username')} />
-                  <Span variation='error'>{formState.errors.username?.message}</Span>
-                </InputRoot>
-                <InputRoot>
-                  <Label>Email</Label>
-                  <InputText placeholder='Email' {...register('email')} />
-                  <Span variation='error'>{formState.errors.email?.message}</Span>
-                </InputRoot>
-                <InputRoot>
-                  <Label>Phone</Label>
-                  <InputText placeholder='Phone' {...register('phone')} />
-                  <Span variation='error'>{formState.errors.phone?.message}</Span>
-                </InputRoot>
-                <div>
-                  <InputRoot>
-                    <Label>Password</Label>
-                    <InputText placeholder='Password' type="password" {...register('password')} />
-                    <Span variation='error'>{formState.errors.password?.message}</Span>
-                  </InputRoot>
-                  <ul className="max-w-md mt-2 space-y-1 text-gray-500 list-disc list-inside text-sm">
-                    <li>At least one uppercase letter</li>
-                    <li>One special character</li>
-                    <li>At least one number</li>
-                  </ul>
+    <Div variation='router-root'>
+      <Div variation='in-center'>
+        <Div variation='in-center-content'>
+          <Div variation='limiter'>
+            <Div variation='in-center'>
+              <Div variation='in-center-content'>
+                <div className='flex flex-col gap-6 items-center justify-items-center'>
+                  <div className='flex gap-3 items-center mb-3'>
+                    <LockOpen className='w-9 h-9 text-main-violet-500' />
+                    <h1 className='font-semibold text-3xl'>Gameoutd</h1>
+                  </div>
+                  {!success ? (
+                    <div className='gap-3 flex flex-col bg-main-black-800 shadow-sm rounded sm:px-12 px-6 py-12 sm:w-fit w-full'>
+                      <Form onSubmit={handleSubmit((data) => setQueries(() => handleSignUp(data)))}>
+                        <h1 className='font-semibold text-2xl'>Create Account</h1>
+                        <InputRoot>
+                          <Label>Name</Label>
+                          <InputText placeholder='Name' {...register('name')} />
+                          <Span variation='error'>{formState.errors.name?.message}</Span>
+                        </InputRoot>
+                        <InputRoot>
+                          <Label>Last Name</Label>
+                          <InputText placeholder='Last Name' {...register('lastName')} />
+                          <Span variation='error'>{formState.errors.lastName?.message}</Span>
+                        </InputRoot>
+                        <InputRoot>
+                          <Label>Username</Label>
+                          <InputText placeholder='Username' {...register('username')} />
+                          <Span variation='error'>{formState.errors.username?.message}</Span>
+                        </InputRoot>
+                        <InputRoot>
+                          <Label>Email</Label>
+                          <InputText placeholder='Email' {...register('email')} />
+                          <Span variation='error'>{formState.errors.email?.message}</Span>
+                        </InputRoot>
+                        <InputRoot>
+                          <Label>Phone</Label>
+                          <InputText placeholder='Phone' {...register('phone')} />
+                          <Span variation='error'>{formState.errors.phone?.message}</Span>
+                        </InputRoot>
+                        <div>
+                          <InputRoot>
+                            <Label>Password</Label>
+                            <InputText placeholder='Password' type="password" {...register('password')} />
+                            <Span variation='error'>{formState.errors.password?.message}</Span>
+                          </InputRoot>
+                          <ul className="max-w-md mt-2 space-y-1 text-gray-500 list-disc list-inside text-sm">
+                            <li>At least one uppercase letter</li>
+                            <li>One special character</li>
+                            <li>At least one number</li>
+                          </ul>
+                        </div>
+                        <InputRoot>
+                          <Label>Confirm Password</Label>
+                          <InputText placeholder='Confirm Password' type="password" {...register('passwordConfirm')} />
+                          <Span variation='error'>{formState.errors.passwordConfirm?.message}</Span>
+                        </InputRoot>
+                        <div className='mt-5 w-full'>
+                          <Button loadingComponent={<LoaderCircle className={"rotating-div"} />} variation='default-full' loading={!finished}>
+                            Create
+                          </Button>
+                        </div>
+                      </Form>
+                    </div>
+                  ) : (
+                    <div className='gap-6 flex flex-col center max-w-96 bg-main-black-800 shadow-sm rounded sm:px-12 px-6 py-12 sm:w-fit w-full'>
+                      <div className='flex items-center'>
+                        <h1 className='font-semibold text-2xl'>Account Successfully Created</h1>
+                        <ShieldCheck className='w-16 h-16' strokeWidth={1.5} />
+                      </div>
+                      <p>You can now manage your Accounts.</p>
+                      <Button variation='default' onClick={() => navigate(USER_ROUTES.LOGIN)}>
+                        Back to Login
+                      </Button>
+                    </div>
+                  )}
+                  <div className='flex gap-1 text-sm flex-wrap'>
+                    <p>Already have an account?</p>
+                    <Link className='text-main-violet-500 font-semibold' to={"/login"}>Log In</Link>
+                  </div>
                 </div>
-                <InputRoot>
-                  <Label>Confirm Password</Label>
-                  <InputText placeholder='Confirm Password' type="password" {...register('passwordConfirm')} />
-                  <Span variation='error'>{formState.errors.passwordConfirm?.message}</Span>
-                </InputRoot>
-                <Button loadingComponent={<LoaderCircle className="rotating-div" />} variation='default' loading={!finished}>
-                  Create Account
-                </Button>
-              </Form>
-            </div>
-          ) : (
-            <div className='gap-6 flex flex-col center max-w-96 bg-main-black-800 shadow-sm rounded sm:px-12 px-6 py-12 sm:w-fit w-full'>
-              <div className='flex items-center'>
-                <h1 className='font-semibold text-2xl'>Account Successfully Created</h1>
-                <ShieldCheck className='w-16 h-16' strokeWidth={1.5} />
-              </div>
-              <p>You can now manage your Accounts.</p>
-              <Button variation='default' onClick={() => navigate(USER_ROUTES.LOGIN)}>
-                Back to Login
-              </Button>
-            </div>
-          )}
-          <div className='flex gap-1 text-sm flex-wrap'>
-            <p>Already have an account?</p>
-            <Link className='text-main-violet-500 font-semibold' to={"/login"}>Log In</Link>
-          </div>
-        </div>
-      </Section>
-    </section>
+              </Div>
+            </Div>
+          </Div>
+        </Div>
+      </Div>
+    </Div>
   );
 }
 

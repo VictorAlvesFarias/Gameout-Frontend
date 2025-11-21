@@ -10,7 +10,7 @@ class LoginService extends BaseHttpService {
       config: () => ({
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Cookies.get('accessToken') ?? ''}`
+          'Authorization': `Bearer ${Cookies.get('token') ?? ''}`
         },
       }),
       catch: (error) => {
@@ -33,10 +33,10 @@ class LoginService extends BaseHttpService {
 
       keys.forEach(e => {
         if (typeof data[e] == "object") {
-          Cookies.set(e, JSON.stringify(data[e]), { expires: Number(data.expirationTimeAccessToken) })
+          Cookies.set(e, JSON.stringify(data[e]), { expires: Number(data.expirationTimetoken) })
         }
         else {
-          Cookies.set(e, data[e], { expires: Number(data.expirationTimeAccessToken) })
+          Cookies.set(e, data[e], { expires: Number(data.expirationTimetoken) })
         }
       })
 
@@ -51,6 +51,8 @@ class LoginService extends BaseHttpService {
     keys.forEach(e => {
       Cookies.remove(e)
     })
+
+    window.location.href = '/login'
   }
 }
 

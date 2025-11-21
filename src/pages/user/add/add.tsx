@@ -10,6 +10,7 @@ import InputRoot from '../../../components/input-root';
 import InputText from '../../../components/input-text';
 import Span from '../../../components/Span';
 import { IAppFile, saveService } from '../../../services/save-service';
+import Div from '../../../components/div';
 
 function Add() {
   const navigate = useNavigate()
@@ -44,24 +45,26 @@ function Add() {
   }
 
   return (
-    <div className='w-full h-full flex items-center justify-center'>
-      {
-        loading.add ?
-          <LoaderCircle className={"rotating-div"} ></LoaderCircle>
-          :
-          <Form onSubmit={handleSubmit(handleAddSave)}>
-            <InputRoot>
-              <InputText {...register("name")} variation='default-full' placeholder='Save name' />
-              <Span variation='error'>{errors.name?.message}</Span>
-            </InputRoot>
-            <InputRoot>
-              <InputText {...register("path")} variation='default-full' placeholder='Save path' />
-              <Span variation='error'>{errors.name?.message}</Span>
-            </InputRoot>
-            <Button>Save</Button>
-          </Form>
-      }
-    </div>
+    <Div variation="in-center">
+      <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50 border border-zinc-700 rounded'>
+        {
+          loading.add ?
+            <LoaderCircle className={"rotating-div"} ></LoaderCircle>
+            :
+            <Form onSubmit={handleSubmit(handleAddSave)}>
+              <InputRoot>
+                <InputText {...register("name")} variation='default-full' placeholder='Save name' />
+                <Span variation='error'>{errors.name?.message}</Span>
+              </InputRoot>
+              <InputRoot>
+                <InputText {...register("path")} variation='default-full' placeholder='Save path' />
+                <Span variation='error'>{errors.name?.message}</Span>
+              </InputRoot>
+              <Button>Save</Button>
+            </Form>
+        }
+      </Div>
+    </Div>
   )
 }
 

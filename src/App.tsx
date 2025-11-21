@@ -13,9 +13,9 @@ import { AuthenticationService } from 'typescript-toolkit'
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
   const permissions = Cookies.get('claims');
-  const expirationDate: any = Cookies.get("expirationDateTimeAccessToken")
+  const expirationDate: any = Cookies.get("expectedExpirationTokenDateTime")
 
   function onInit(props: IAuthContextType) {
     AuthenticationService.validateSession(
@@ -57,14 +57,12 @@ function App() {
           token={token ?? null}
           onInit={onInit}
         >
-          <>
-            <ToastContainer />
-            <Routes>
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<Signup />} />
-              <Route path="/*" element={<UserRouter />} />
-            </Routes>
-          </>
+          <ToastContainer />
+          <Routes>
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="/*" element={<UserRouter />} />
+          </Routes>
         </AuthProvider>
       </BaseProvider>
     </Router>

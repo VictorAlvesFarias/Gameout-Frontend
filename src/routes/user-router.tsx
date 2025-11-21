@@ -21,10 +21,12 @@ import Button from "../components/button";
 import Add from "../pages/user/add/add";
 import Home from "../pages/user/home/home";
 import InProcessing from "../pages/user/in-processing/in-processing";
-import Logs from "../pages/user/logs/logs";
+import Logs from "../pages/user/requests-logs/logs";
+import Profile from "../pages/user/profile/profile";
 import { AuthenticationService } from "typescript-toolkit";
 import { AUTH } from "../config/auth-config";
 import { loginService } from "../services/login-service";
+import Div from "../components/div";
 
 function UserRouters() {
   const cookies = Cookies.get();
@@ -32,7 +34,7 @@ function UserRouters() {
 
   return (
     <SidebarContext>
-      <SidebarRoot>
+      <Div variation="router-root">
         <SidebarMenu>
           <SidebarItem redirect={() => {
             navigation(USER_ROUTES.PROFILE)
@@ -107,9 +109,10 @@ function UserRouters() {
             <Route path={USER_ROUTES.HOME} element={<Home />} />
             <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
             <Route path={USER_ROUTES.LOGS} element={<Logs />} />
+            <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
           </Routes>
         </SidebarContent>
-      </SidebarRoot>
+      </Div>
     </SidebarContext>
   );
 }
