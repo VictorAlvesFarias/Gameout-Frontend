@@ -72,7 +72,7 @@ function Login() {
                     <h1 className='font-semibold text-3xl '>Gameoutd</h1>
                   </div>
                   <div className='flex flex-col bg-main-black-800 shadow-sm rounded sm:px-9 px-6 py-9 sm:w-fit w-full'>
-                    <Form onSubmit={handleSubmit(handleSingIn)}>
+                    <Form onSubmit={handleSubmit((data) => setQueries(() => handleSingIn(data)))}>
                       <h1 className='font-semibold text-2xl'>Welcome</h1>
                       <InputRoot>
                         <Label>E-Mail</Label>

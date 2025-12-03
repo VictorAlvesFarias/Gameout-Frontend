@@ -1,4 +1,4 @@
-import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText } from "lucide-react";
+import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Key } from "lucide-react";
 import React, { useContext } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext, IAuthContextType } from "react-toolkit";
@@ -11,7 +11,7 @@ import SidebarHamburguer from "../components/sidebar-hamburguer";
 import { If } from "react-base-components";
 import Cookies from 'js-cookie';
 import { SidebarContext } from "react-base-components";
-import { USER_ROUTES } from "../config/routes-config";
+import { USER_ROUTES, ADMIN_ROUTES } from "../config/routes-config";
 import { AccordionContext } from "react-base-components";
 import { ModalContext } from "react-base-components"
 import ModalRoot from '../components/modal-root'
@@ -23,6 +23,7 @@ import Home from "../pages/user/home/home";
 import InProcessing from "../pages/user/in-processing/in-processing";
 import Logs from "../pages/user/requests-logs/logs";
 import Profile from "../pages/user/profile/profile";
+import ApiKey from "../pages/user/api-key/api-key";
 import { AuthenticationService } from "typescript-toolkit";
 import { AUTH } from "../config/auth-config";
 import { loginService } from "../services/login-service";
@@ -75,6 +76,12 @@ function UserRouters() {
           }}>
             <SidebarHref><FileText />Logs</SidebarHref>
           </SidebarItem>
+          <SidebarItem redirect={() => {
+            navigation(ADMIN_ROUTES.API_KEY)
+            return ADMIN_ROUTES.API_KEY
+          }}>
+            <SidebarHref><Key />API Key</SidebarHref>
+          </SidebarItem>
           <ModalContext>
             <div className="flex-1 flex items-end w-full">
               <ModalOpen className="w-full h-fit">
@@ -110,6 +117,7 @@ function UserRouters() {
             <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
             <Route path={USER_ROUTES.LOGS} element={<Logs />} />
             <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
+            <Route path={ADMIN_ROUTES.API_KEY} element={<ApiKey />} />
           </Routes>
         </SidebarContent>
       </Div>

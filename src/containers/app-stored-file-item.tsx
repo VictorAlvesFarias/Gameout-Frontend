@@ -1,7 +1,7 @@
 import { Clock } from 'lucide-react';
 import React from 'react'
 
-function AppFileItem(x: {
+function AppStoredFileItem(x: {
     name: string;
     createDate: string;
     updateDate: string;
@@ -10,6 +10,8 @@ function AppFileItem(x: {
     message?: string;
     version?: string;
 }) {
+        console.log(x)
+
     function formatDate(dateString: string): string {
         return new Date(dateString).toLocaleString('en-US', {
             year: 'numeric',
@@ -22,6 +24,8 @@ function AppFileItem(x: {
     }
 
     function getProcessingStatusColor(status?: number): string {
+        console.log(x.name)
+
         if (status == 2) {
             return 'text-red-400';
         }
@@ -58,4 +62,4 @@ function AppFileItem(x: {
     )
 }
 
-export default AppFileItem
+export default AppStoredFileItem

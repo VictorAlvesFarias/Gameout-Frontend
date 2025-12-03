@@ -9,7 +9,7 @@ import Form from '../../../components/Form';
 import InputRoot from '../../../components/input-root';
 import InputText from '../../../components/input-text';
 import Span from '../../../components/Span';
-import { IAppFile, saveService } from '../../../services/save-service';
+import { IAppFileRequest, saveService } from '../../../services/save-service';
 import Div from '../../../components/div';
 
 function Add() {
@@ -31,14 +31,15 @@ function Add() {
   function handleAddSave(data: z.infer<typeof formSchema>) {
     setLoading({ ...loading, add: true })
 
-    const saveItem: Partial<IAppFile> = {
+    const saveItem: IAppFileRequest = {
       name: data.name,
       observer: false,
       path: data.path,
-      versionControl: false
+      versionControl: false,
+      autoValidateSync: false
     }
 
-    saveService.add(saveItem as IAppFile)
+    saveService.add(saveItem)
       .then(e => {
         navigate("/")
       })

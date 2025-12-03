@@ -1,0 +1,106 @@
+import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
+import { env } from "../environment";
+import { AUTH } from "../config/auth-config";
+import { toast } from "react-toastify";
+
+interface IApplicationLog {
+    id: number;
+    message: string;
+    traceId: number;
+    type: string; // Code, Exception, Json, Message, etc
+    action: string; // Error, Warning, Success, Info, etc
+    createDate: string;
+    updateDate: string;
+    userId: string;
+}
+
+interface ITrace {
+    id: number;
+    name: string;
+    description: string;
+    createDate: string;
+    updateDate: string;
+    userId: string;
+    logsCount: number;
+}
+
+interface ITraceWithLogs extends ITrace {
+    logs: IApplicationLog[];
+}
+
+interface IContextTrace {
+    id: number;
+    traceId: number;
+    entityName: string;
+    entityId: string;
+}
+
+class ApplicationLogService extends BaseHttpService {
+    constructor() {
+        super(() => ({
+            config: () => ({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': AUTH.DEFAULT_AUTHORIZATION_TOKEN()
+                },
+            }),
+            catch: (error) => {
+                catchErrors(error, (e, m) => {
+                    toast.error(m)
+                })
+
+                return error
+            }
+        }))
+    }
+
+    public async getLogsByTraceId(traceId: number) {
+        try {
+            const response = await this.get<IBaseHttpResponseApi<IApplicationLog[]>>({
+                api: env,
+                href: `/api/application-log/trace/${traceId}`
+            });
+            console.log('getLogsByTraceId raw response:', response);
+            return response;
+        } catch (error) {
+            console.error('getLogsByTraceId error:', error);
+            throw error;
+        }
+    }
+
+    public async getTracesByEntity(entityName: string, entityId: string) {
+        try {
+            const response = await this.get<IBaseHttpResponseApi<ITrace[]>>({
+                api: env,
+                href: `/api/application-log/entity/${entityName}/${entityId}`
+            });
+            console.log('getTracesByEntity raw response:', response);
+            return response;
+        } catch (error) {
+            console.error('getTracesByEntity error:', error);
+            throw error;
+        }
+    }
+
+    public async getAllTraces(page: number = 1, pageSize: number = 50) {
+        const response = await this.get<IBaseHttpResponseApi<ITrace[]>>({
+            api: env,
+            href: `/api/application-log/traces`,
+            params: { page, pageSize }
+        });
+        console.log('getAllTraces raw response:', response);
+        return response;
+    }
+}
+
+const applicationLogService = new ApplicationLogService();
+
+export {
+    ApplicationLogService,
+    applicationLogService,
+    IApplicationLog,
+    ITrace,
+    ITraceWithLogs,
+    IContextTrace
+};
+

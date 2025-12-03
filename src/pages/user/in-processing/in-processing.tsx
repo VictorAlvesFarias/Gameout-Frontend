@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import { webSocketService } from '../../../services/web-socket-service'
 import AppFileItem from '../../../containers/app-file-item'
 import Div from '../../../components/div'
+import AppStoredFileItem from '../../../containers/app-stored-file-item'
 
 interface WebSocketRequest {
   Event: string
@@ -78,6 +79,19 @@ function InProcessing() {
     });
   }
 
+  function getStatusFromAppStoredFile(file: IAppStoredFile): { status: "success" | "error" | "warning" | "info", message: string } {
+    if (file.status === 2 || file.status === 4) {
+      return { status: "error", message: file.statusMessage || file.message || "Error" };
+    }
+    if (file.status === 3) {
+      return { status: "success", message: file.statusMessage || "Completed" };
+    }
+    if (file.status === 1) {
+      return { status: "warning", message: file.statusMessage || "Processing" };
+    }
+    return { status: "info", message: file.statusMessage || "Pending" };
+  }
+
   useEffect(() => {
     setQuery(() => handleGetSaves())
   }, [])
@@ -112,7 +126,7 @@ function InProcessing() {
 
     return () => {
       webSocketService.off('NewsFilesRequestPing', newsFilesRequestPing)
-      webSocketService.off('AppFileUpdatedPing', appFileUpdatedPing)
+      webSocketService.off ('AppFileUpdatedPing', appFileUpdatedPing)
       webSocketService.off('AppFileErrorPing', appFileErrorPing)
       webSocketService.off('AppFileStatusUpdatePing', appFileStatusUpdatePing)
     }
@@ -156,13 +170,13 @@ function InProcessing() {
                   <div className='rounded flex justify-between items-center hover:bg-zinc-800 border border-zinc-700'>
                     <AccordionTitleContainer className="w-full h-full flex items-center cursor-pointer text-sm text-white">
                       <Div variation='accordion-content'>
-                        <AppFileItem
+                        <AppStoredFileItem
                           name={x.name}
                           createDate={x.createDate}
                           updateDate={x.updateDate}
-                          processing={x.processing}
-                          message={x.error ? `Error: ${x.message || 'Unknown error'}` : !x.processing ? "Completed" : "Processing"}
-                          status={x.error ? "error" : !x.processing ? "success" : "warning"}
+                          processing={true}
+                          message={x.statusMessage}
+                          status={x.status}
                         />
                       </Div>
                     </AccordionTitleContainer>
@@ -200,15 +214,30 @@ function InProcessing() {
                         </div>
                       </Div>
 
-                      {(x.error) && (
+                      {(x.status === 2) && (
                         <div>
                           <span className='text-sm font-semibold text-red-400 flex items-center gap-2'>
                             <AlertCircle className='h-4 w-4' />
-                            Error Message: {x.message}
+                            {x.statusMessage || "An error occurred"}
                           </span>
-                          <p className='text-sm text-red-300 mt-1 bg-red-900 bg-opacity-20 p-2 rounded'>
-                            {x.error}
-                          </p>
+                          {(x.statusDetails) && (
+                            <p className='text-sm text-red-300 mt-1 bg-red-900 bg-opacity-20 p-2 rounded'>
+                              {x.statusDetails}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {x.statusMessage && x.status !== 2 && (
+                        <div>
+                          <span className='text-sm font-semibold text-gray-300 flex items-center gap-2'>
+                            Status: {x.statusMessage}
+                          </span>
+                          {x.statusDetails && (
+                            <p className='text-sm text-gray-400 mt-1 bg-gray-800 bg-opacity-20 p-2 rounded'>
+                              {x.statusDetails}
+                            </p>
+                          )}
                         </div>
                       )}
 
@@ -217,7 +246,7 @@ function InProcessing() {
                           Check Status
                         </Button>
 
-                        {x.error && (
+                        {x.status === 2 && (
                           <>
                             <Button variation='modal' onClick={() => handleReprocessFile(x.id)}>
                               Reprocess

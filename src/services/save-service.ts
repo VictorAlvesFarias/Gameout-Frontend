@@ -4,6 +4,14 @@ import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-t
 import { toast } from "react-toastify";
 import { AUTH } from "../config/auth-config";
 
+interface IAppFileRequest {
+    name: string;
+    path: string;
+    versionControl: boolean;
+    observer: boolean;
+    autoValidateSync: boolean;
+}
+
 interface IAppFile {
     name: string;
     path: string;
@@ -15,6 +23,9 @@ interface IAppFile {
     synced: boolean;
     autoValidateSync: boolean;
     userId: string;
+    status: number;
+    statusDetails?: string;
+    statusMessage?: string;
 }
 
 interface IStoredFile {
@@ -37,11 +48,12 @@ interface IAppStoredFile {
     createDate: string
     updateDate: string
     userId: string
-    processing: boolean
     versioned: boolean
     message?: string
-    error: boolean
     sizeInBytes: number
+    status: number
+    statusDetails?: string
+    statusMessage?: string
 }
 
 class SaveService extends BaseHttpService {
@@ -63,15 +75,16 @@ class SaveService extends BaseHttpService {
         }))
     }
 
-    public async add(data: IAppFile) {
+    public async add(data: IAppFileRequest) {
         const result = this.post<IBaseHttpResponseApi<IAppFile>>({ api: env, href: "/upload-file" }, data)
-
+        result.then(() => {
+            toast.success("File added successfully")
+        })
         return result;
     }
 
-    public async update(data: IAppFile, id: number) {
+    public async update(data: IAppFileRequest, id: number) {
         const result = this.put<IBaseHttpResponseApi<IAppFile>>({ api: env, href: "/update-file", params: { id: id } }, data)
-
         return result;
     }
 
@@ -83,13 +96,17 @@ class SaveService extends BaseHttpService {
 
     public async remove(params: any) {
         const result = this.delete({ api: env, href: "/delete-file", params: params })
-
+        result.then(() => {
+            toast.success("File deleted successfully")
+        })
         return result;
     }
 
     public async removeStoredFile(params: any) {
         const result = this.delete({ api: env, href: "/delete-stored-file", params: params })
-
+        result.then(() => {
+            toast.success("Stored file deleted successfully")
+        })
         return result;
     }
 
@@ -104,7 +121,10 @@ class SaveService extends BaseHttpService {
     }
 
     public async singleSync(idAppFile: number) {
-        const response = await this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/single-sync", params: { idAppFile } }, {})
+        const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/single-sync", params: { idAppFile } }, {})
+        response.then(() => {
+            toast.success("Sync request sent successfully")
+        })
         return response
     }
 
@@ -126,25 +146,39 @@ class SaveService extends BaseHttpService {
         a.click()
 
         URL.revokeObjectURL(url)
+        
+        toast.success("File downloaded successfully")
     }
 
     public async reprocessFile(appStoredFileId: number) {
-        const response = await this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/reprocess-file", params: { appStoredFileId } }, {})
+        const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/reprocess-file", params: { appStoredFileId } }, {})
+        response.then(() => {
+            toast.success("File marked for reprocessing successfully")
+        })
         return response
     }
 
     public async deleteFileWithError(appStoredFileId: number) {
-        const response = await this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-file-with-error", params: { appStoredFileId } })
+        const response = this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-file-with-error", params: { appStoredFileId } })
+        response.then(() => {
+            toast.success("File with error deleted successfully")
+        })
         return response
     }
 
     public async checkProcessingStatus(appStoredFileId: number) {
-        const response = await this.get<IBaseHttpResponseApi<any>>({ api: env, href: "/check-processing-status", params: { appStoredFileId } })
+        const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/check-stored-file-status" }, { appStoredFileId })
+        response.then(() => {
+            toast.success("Status check initiated successfully")
+        })
         return response
     }
 
     public async validateStatus(appFileId: number) {
-        const response = await this.get<IBaseHttpResponseApi<any>>({ api: env, href: "/validate-status", params: { appFileId } })
+        const response = this.get<IBaseHttpResponseApi<any>>({ api: env, href: "/validate-status", params: { appFileId } })
+        response.then(() => {
+            toast.success("Status validation requested successfully")
+        })
         return response
     }
 }
@@ -154,6 +188,7 @@ const saveService = new SaveService()
 export {
     SaveService,
     saveService,
+    IAppFileRequest,
     IAppFile,
     IStoredFile,
     IAppStoredFile

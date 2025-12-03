@@ -30,11 +30,11 @@ interface IAppFileLog {
     userId: string;
 }
 
-interface IAppFileLogFilter {
+interface IAppFileLogRequest {
     appFileId?: number;
     appStoredFileId?: number;
     storedFileId?: number;
-    actionType?: AppFileActionType;
+    actionType?: number;
     startDate?: string;
     endDate?: string;
     userId?: string;
@@ -61,7 +61,7 @@ class LogService extends BaseHttpService {
         }))
     }
 
-    public async getAll(filters?: IAppFileLogFilter) {
+    public async getAll(filters?: IAppFileLogRequest) {
         const response = await this.get<IBaseHttpResponseApi<IAppFileLog[]>>({
             api: env,
             href: "/api/AppFileLog",
@@ -95,6 +95,6 @@ export {
     LogService,
     logService,
     IAppFileLog,
-    IAppFileLogFilter,
+    IAppFileLogRequest,
     AppFileActionType
 };

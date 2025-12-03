@@ -15,7 +15,7 @@ import { useQuery } from "react-toolkit";
 import { ModalContext } from "react-base-components";
 import ModalRoot from '../../../components/modal-root';
 import { ModalClose } from "react-base-components";
-import { IAppFile, IAppStoredFile, IStoredFile, saveService } from '../../../services/save-service';
+import { IAppFile, IAppFileRequest, IAppStoredFile, IStoredFile, saveService } from '../../../services/save-service';
 import { useNavigate } from 'react-router-dom';
 import { USER_ROUTES } from '../../../config/routes-config';
 import { toast } from 'react-toastify';
@@ -70,7 +70,15 @@ function Home() {
 
     setAppFiles(newList)
 
-    return saveService.update(newObject, id)
+    const updateRequest: IAppFileRequest = {
+      name: newObject.name,
+      path: newObject.path,
+      versionControl: newObject.versionControl,
+      observer: newObject.observer,
+      autoValidateSync: newObject.autoValidateSync
+    }
+
+    return saveService.update(updateRequest, id)
   }
 
   function handleGetStoredFiles(idAppFile: number) {
@@ -90,9 +98,7 @@ function Home() {
   }
 
   function handleValidateStatus(idAppFile: number) {
-    return saveService.validateStatus(idAppFile).then((e: any) => {
-      toast.success('Status update request is send.')
-    })
+    return saveService.validateStatus(idAppFile)
   }
 
 
@@ -119,14 +125,14 @@ function Home() {
       setQuery(() => handleGetSaves())
     }
 
-    webSocketService.on('AppFileUpdatedPing', newsFilesRequestPing)
+    webSocketService.on('AppFileUpdatedPing', appFileUpdatedPing)
 
     const appFileStatusUpdatePing = (req: any) => {
       toast.success('Status is updated.')
       setQuery(() => handleGetSaves())
     }
 
-    webSocketService.on('AppFileStatusUpdatePing', newsFilesRequestPing)
+    webSocketService.on('AppFileStatusUpdatePing', appFileStatusUpdatePing)
 
     return () => {
       webSocketService.off('NewsFilesRequestPing', newsFilesRequestPing)
@@ -174,8 +180,8 @@ function Home() {
                                 createDate={x.createDate}
                                 updateDate={x.updateDate}
                                 processing={false}
-                                message={x.synced ? "Synced" : "Unsynced"}
-                                status={x.synced ? "success" : "error"}
+                                message={x.statusMessage}
+                                status={x.status}
                               />
                             </Div>
                           </AccordionTitle>

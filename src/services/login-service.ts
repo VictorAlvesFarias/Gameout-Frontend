@@ -40,6 +40,8 @@ class LoginService extends BaseHttpService {
         }
       })
 
+      Cookies.set("type", "web")
+
       return data
     })
 
