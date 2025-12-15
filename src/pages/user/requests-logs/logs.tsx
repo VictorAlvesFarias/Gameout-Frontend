@@ -102,7 +102,7 @@ function Logs() {
                             )}
                           </div>
                           <div className='text-xs text-gray-400'>
-                            {formatDate(log.createDate)}
+                            {formatDate(log.createDate)} - Trace ID: {log.traceId}
                           </div>
                         </div>
                       </AccordionTitle>
@@ -111,37 +111,30 @@ function Logs() {
                     <Accordion>
                       <Div variation='accordion-content'>
                         <Div variation='accordion-content-grid'>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>Message:</span>
                             <p className='text-sm text-white mt-1'>{log.message}</p>
                           </div>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>Trace ID:</span>
                             <p className='text-sm text-white mt-1'>{log.traceId}</p>
                           </div>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>Action:</span>
                             <p className='text-sm text-white mt-1 break-all'>{log.action}</p>
                           </div>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>Created:</span>
                             <p className='text-sm text-white mt-1'>{formatDate(log.createDate)}</p>
                           </div>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>Updated:</span>
                             <p className='text-sm text-white mt-1'>{formatDate(log.updateDate)}</p>
                           </div>
-
                           <div>
                             <span className='text-sm font-semibold text-gray-300'>User ID:</span>
                             <p className='text-sm text-white mt-1'>{log.userId}</p>
                           </div>
-
                         </Div>
                       </Div>
                     </Accordion>
