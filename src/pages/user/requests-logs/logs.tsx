@@ -58,7 +58,7 @@ function Logs() {
 
   return (
     <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
-      <div className='flex gap-3 items-center '>
+      <div className='flex gap-3 items-center mb-4'>
         <InputText onChange={handleFilter} type="text" placeholder='Search traces' variation='ultra-rounded' />
         <div className='flex-1 justify-end flex'>
           <Button onClick={handleGetLogs}>Verify</Button>
@@ -97,9 +97,6 @@ function Logs() {
                             <span className={`font-semibold ${getActionTypeColor(log.action)}`}>
                               {log.message}
                             </span>
-                            {log.action && (
-                              <span className='text-gray-300'>- {log.action}</span>
-                            )}
                           </div>
                           <div className='text-xs text-gray-400'>
                             {formatDate(log.createDate)} - Trace ID: {log.traceId}
@@ -107,7 +104,6 @@ function Logs() {
                         </div>
                       </AccordionTitle>
                     </Div>
-
                     <Accordion>
                       <Div variation='accordion-content'>
                         <Div variation='accordion-content-grid'>
