@@ -15,18 +15,20 @@ import { useQuery } from "react-toolkit";
 import { ModalContext } from "react-base-components";
 import ModalRoot from '../../../components/modal-root';
 import { ModalClose } from "react-base-components";
-import { IAppFile, IAppFileRequest, IAppStoredFile, IStoredFile, saveService } from '../../../services/save-service';
 import { useNavigate } from 'react-router-dom';
-import { USER_ROUTES } from '../../../config/routes-config';
 import { toast } from 'react-toastify';
 import { webSocketService } from '../../../services/web-socket-service';
 import Div from '../../../components/div';
 import AppFileItem from '../../../containers/app-file-item';
+import { saveService } from '../../../services/save-service';
+import { IAppFileRequest } from '../../../interfaces/IAppFileRequest';
+import { IAppFileResponse } from '../../../interfaces/IAppFileResponse';
+import { IAppStoredFileResponse } from '../../../interfaces/IAppStoredFileResponse';
 
 function Home() {
-  const [appFiles, setAppFiles] = useState<IAppFile[]>([])
+  const [appFiles, setAppFiles] = useState<IAppFileResponse[]>([])
   const [selectedAppFiles, setSelectedAppFiles] = useState<number | null>(null)
-  const [storedFiles, setStoredFiles] = useState<IAppStoredFile[]>([])
+  const [storedFiles, setStoredFiles] = useState<IAppStoredFileResponse[]>([])
   const [filter, setFilter] = useState<string>("")
   const [allRequestsResolved, setQuery] = useQuery(false)
   const [currentFileId, setCurrentFileId] = useState<number>(0)
@@ -92,13 +94,13 @@ function Home() {
   }
 
   function handleSingleSync(idAppFile: number) {
-    return saveService.singleSync(idAppFile).then((e: any) => {
+    return saveService.singleSync({ idAppFile }).then((e: any) => {
       modalRef.current?.close()
     })
   }
 
-  function handleValidateStatus(idAppFile: number) {
-    return saveService.validateStatus(idAppFile)
+  function handleValidateStatus(appFileId: number) {
+    return saveService.checkAppFileStatus({ appFileId })
   }
 
 
@@ -150,7 +152,11 @@ function Home() {
       <div className='flex gap-3 items-center '>
         <InputText onChange={handleFilter} type="text" placeholder='Search saves' variation='ultra-rounded' />
         <div className='flex-1 justify-end flex'>
-          <Button onClick={handleGetSaves} >Verify</Button>
+          <div className='w-11 h-11'>
+            <Button onClick={handleGetSaves} variation='default-full'>
+                <RefreshCcw className='h-4 w-4' />
+            </Button>
+          </div>
         </div>
       </div>
       {

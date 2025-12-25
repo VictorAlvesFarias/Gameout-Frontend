@@ -106,7 +106,7 @@ function Profile() {
       <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50 border border-zinc-700 rounded'>
         {user ? (
           <>
-            <div className="flex flex-col items-center text-center p-6">
+            <div className="flex flex-col items-center text-center p-6 gap-3">
               <div className="relative w-28 h-28 rounded-full bg-gradient-to-tr from-zinc-600 to-zinc-400 flex items-center justify-center shadow-md">
                 <User className="w-12 h-12 text-main-black-900" />
               </div>
@@ -115,8 +115,8 @@ function Profile() {
                 <p className="text-zinc-400 text-sm">@{user.username}</p>
               </div>
             </div>
-            <div className='max-w-7xl'>
-              <Form onSubmit={handleSubmitProfile((data) => setQueries(() => handleUpdateProfile(data)))}>
+            <div className='max-w-xl w-full'>
+              <Form variation='default' onSubmit={handleSubmitProfile((data) => setQueries(() => handleUpdateProfile(data)))}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <InputRoot>
                     <Label>Name</Label>

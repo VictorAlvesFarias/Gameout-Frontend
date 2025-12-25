@@ -12,7 +12,7 @@ const buttonVariations = {
         loadingComponent={
           <LucideLoaderCircle className='flex items-center justify-center w-6 h-6 rotating-div' />
         }
-        className='flex items-center justify-center bg-white hover:bg-zinc-200 transition-all p-2 px-2 rounded text-zinc-800' />
+        className='flex items-center justify-center bg-white hover:bg-zinc-200 transition-all px-2 rounded text-zinc-800 h-11 p-1' />
     )
   },
   "default-full": (props: IButtonContainerProps, ref: any) => {
@@ -23,7 +23,7 @@ const buttonVariations = {
         loadingComponent={
           <LucideLoaderCircle className='flex items-center justify-center w-6 h-6 rotating-div' />
         }
-        className='flex items-center justify-center bg-white hover:bg-zinc-200 transition-all p-2 px-2 rounded text-zinc-800 w-full' />
+        className='flex items-center justify-center bg-white hover:bg-zinc-200 transition-all px-2 rounded text-zinc-800 w-full h-11 p-1' />
     )
   },
   modal: (props: IButtonContainerProps, ref: any) => {

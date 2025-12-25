@@ -8,12 +8,13 @@ import AccordionRoot from '../../../components/accordion-root'
 import { AccordionTitleContainer } from "react-base-components"
 import { AccordionContext } from "react-base-components"
 import { useQuery } from "react-toolkit"
-import { IAppStoredFile, saveService } from '../../../services/save-service'
 import { toast } from 'react-toastify'
 import { webSocketService } from '../../../services/web-socket-service'
 import AppFileItem from '../../../containers/app-file-item'
 import Div from '../../../components/div'
 import AppStoredFileItem from '../../../containers/app-stored-file-item'
+import { saveService } from '../../../services/save-service'
+import { IAppStoredFileResponse } from '../../../interfaces/IAppStoredFileResponse'
 
 interface WebSocketRequest {
   Event: string
@@ -21,7 +22,7 @@ interface WebSocketRequest {
 }
 
 function InProcessing() {
-  const [storedFiles, setStoredFiles] = useState<IAppStoredFile[]>([])
+  const [storedFiles, setStoredFiles] = useState<IAppStoredFileResponse[]>([])
   const [allRequestsResolved, setQuery] = useQuery(false)
   const [filter, setFilter] = useState<string>("")
   const wsRef = useRef<WebSocket | null>(null)
@@ -59,7 +60,7 @@ function InProcessing() {
   }
 
   function handleCheckProcessingStatus(appStoredFileId: number) {
-    saveService.checkProcessingStatus(appStoredFileId)
+    saveService.checkProcessingStatus({ appStoredFileId })
       .then((response) => {
         toast.info('Status check initiated...')
       })
@@ -77,19 +78,6 @@ function InProcessing() {
       minute: '2-digit',
       second: '2-digit'
     });
-  }
-
-  function getStatusFromAppStoredFile(file: IAppStoredFile): { status: "success" | "error" | "warning" | "info", message: string } {
-    if (file.status === 2 || file.status === 4) {
-      return { status: "error", message: file.statusMessage || file.message || "Error" };
-    }
-    if (file.status === 3) {
-      return { status: "success", message: file.statusMessage || "Completed" };
-    }
-    if (file.status === 1) {
-      return { status: "warning", message: file.statusMessage || "Processing" };
-    }
-    return { status: "info", message: file.statusMessage || "Pending" };
   }
 
   useEffect(() => {
@@ -126,7 +114,7 @@ function InProcessing() {
 
     return () => {
       webSocketService.off('NewsFilesRequestPing', newsFilesRequestPing)
-      webSocketService.off ('AppFileUpdatedPing', appFileUpdatedPing)
+      webSocketService.off('AppFileUpdatedPing', appFileUpdatedPing)
       webSocketService.off('AppFileErrorPing', appFileErrorPing)
       webSocketService.off('AppFileStatusUpdatePing', appFileStatusUpdatePing)
     }
@@ -138,9 +126,11 @@ function InProcessing() {
       <div className='flex gap-3 items-center mb-4'>
         <InputText onChange={handleFilter} type="text" placeholder='Search files in processing' variation='ultra-rounded' />
         <div className='flex-1 justify-end flex'>
-          <Button onClick={handleGetSaves} variation='default'>
-            Verify
-          </Button>
+          <div className='w-11 h-11'>
+            <Button onClick={handleGetSaves} variation='default-full'>
+                <RefreshCcw className='h-4 w-4' />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -213,34 +203,6 @@ function InProcessing() {
                           <p className='text-sm text-white mt-1'>{x.storedFileId || 'Not assigned'}</p>
                         </div>
                       </Div>
-
-                      {(x.status === 2) && (
-                        <div>
-                          <span className='text-sm font-semibold text-red-400 flex items-center gap-2'>
-                            <AlertCircle className='h-4 w-4' />
-                            {x.statusMessage || "An error occurred"}
-                          </span>
-                          {(x.statusDetails) && (
-                            <p className='text-sm text-red-300 mt-1 bg-red-900 bg-opacity-20 p-2 rounded'>
-                              {x.statusDetails}
-                            </p>
-                          )}
-                        </div>
-                      )}
-
-                      {x.statusMessage && x.status !== 2 && (
-                        <div>
-                          <span className='text-sm font-semibold text-gray-300 flex items-center gap-2'>
-                            Status: {x.statusMessage}
-                          </span>
-                          {x.statusDetails && (
-                            <p className='text-sm text-gray-400 mt-1 bg-gray-800 bg-opacity-20 p-2 rounded'>
-                              {x.statusDetails}
-                            </p>
-                          )}
-                        </div>
-                      )}
-
                       <div className='flex gap-3 flex-wrap'>
                         <Button onClick={() => handleCheckProcessingStatus(x.id)} variation='modal'>
                           Check Status

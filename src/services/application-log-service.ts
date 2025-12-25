@@ -91,6 +91,19 @@ class ApplicationLogService extends BaseHttpService {
         console.log('getAllTraces raw response:', response);
         return response;
     }
+
+    public async clearAllLogs() {
+        const response = this.delete<IBaseHttpResponseApi<any>>({
+            api: env,
+            href: `/api/application-log/clear`
+        });
+
+        response.then(() => {
+            toast.success("Logs cleared successfully");
+        });
+
+        return response;
+    }
 }
 
 const applicationLogService = new ApplicationLogService();

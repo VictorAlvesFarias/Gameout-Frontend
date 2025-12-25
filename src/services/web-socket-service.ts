@@ -7,10 +7,12 @@ export class GameoutWebSocket extends WebSocketService {
     private isRequestingUrl: boolean = false
 
     protected async requestUrl(): Promise<void> {
-        if (this.isRequestingUrl) return
-        
+        if (this.isRequestingUrl) {
+            return
+        }
+
         this.isRequestingUrl = true
-        
+
         try {
             const token = Cookies.get('token');
 
@@ -18,7 +20,7 @@ export class GameoutWebSocket extends WebSocketService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 }
             })
 
@@ -29,37 +31,25 @@ export class GameoutWebSocket extends WebSocketService {
             if (data.success && data.data?.url) {
                 const backendUrl = new URL(env)
                 const protocol = backendUrl.protocol === 'https:' ? 'wss:' : 'ws:'
-                const host = backendUrl.host 
-                const path = data.data.url 
-                
-                this.connectionUrl = `${protocol}//${host}${path}`
-                
-                if (data.data.token) {
-                    document.cookie = `x-token-invite=${data.data.token}; path=/; SameSite=Strict${protocol === 'wss:' ? '; Secure' : ''}`
-                    
-                    const jwtToken = Cookies.get('token');
+                const host = backendUrl.host
+                const path = data.data.url
 
-                    if (jwtToken) {
-                        try {
-                            const payload = JSON.parse(atob(jwtToken.split('.')[1]));
-                            const userId = payload.sub || payload.userId || payload.nameid;
-                            
-                            if (userId) {
-                                document.cookie = `clientId=${userId}; path=/; SameSite=Strict${protocol === 'wss:' ? '; Secure' : ''}`
-                            }
-                        } 
-                        catch (e) {
-                            console.warn('Failed to extract userId from JWT:', e)
-                        }
-                    }
-                }
+                console.log('Constructed WebSocket URL:', `${protocol}//${host}${path}`)
+
+                this.connectionUrl = `${protocol}//${host}${path}`
+
+                document.cookie = `x-token-invite=${data.data.token}; path=/; SameSite=None; Secure`
+                document.cookie = `type=web; path=/; SameSite=None; Secure`
+                document.cookie = `id=${Cookies.get('id')}; path=/; SameSite=None; Secure`
             }
             else {
                 console.error('Failed to get WebSocket URL from backend')
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Error requesting WebSocket URL:', error)
-        } finally {
+        }
+        finally {
             this.isRequestingUrl = false
         }
     }
@@ -68,13 +58,14 @@ export class GameoutWebSocket extends WebSocketService {
         if (!this.connectionUrl || this.connectionUrl.trim() === "") {
             this.requestUrl()
         }
-        
+
         return this.connectionUrl
     }
 
     protected webSocketErrorCallback(error: any): void {
         if (error.code === 1002 || error.code === 1003) {
             console.log('Connection lost, resetting URL for reconnection...')
+
             this.connectionUrl = ""
         }
 

@@ -22,16 +22,20 @@ function AppFileItem(x: {
     }
 
     function getProcessingStatusColor(status?: number): string {
-        if (status == 2) {
-            return 'text-red-400';
+        if (status == 1) {
+            return 'text-yellow-400'; // Pending
         }
 
-        if (status == 1) {
-            return 'text-yellow-400';
+        if (status == 2) {
+            return 'text-cyan-400'; // InProgress
         }
 
         if (status == 3) {
-            return 'text-green-400';
+            return 'text-green-400'; // Synced
+        }
+
+        if (status == 4) {
+            return 'text-red-400'; // Unsynced
         }
 
         return ""

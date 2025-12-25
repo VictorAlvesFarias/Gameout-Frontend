@@ -7,6 +7,6 @@ const formVariation = {
         <FormContainer {...props} className='flex flex-col gap-3 p-6' />,
 }
 
-const Form =  componentSelector<keyof typeof formVariation, IFormContainerProps, "className">(formVariation)
+const Form = componentSelector<keyof typeof formVariation, IFormContainerProps, "className">(formVariation)
 
 export default Form

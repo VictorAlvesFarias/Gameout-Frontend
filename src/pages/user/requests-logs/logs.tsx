@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, FileText, LoaderCircle } from 'lucide-react';
+import { Clock, FileText, LoaderCircle, Trash2, RefreshCcw } from 'lucide-react';
 import Button from '../../../components/button';
 import Span from '../../../components/Span';
 import Accordion from '../../../components/accordion';
@@ -24,6 +24,14 @@ function Logs() {
     return applicationLogService.getAllTraces().then(response => {
       setLogs(response.data);
     });
+  }
+
+  async function handleClearLogs() {
+    setQuery(() => 
+      applicationLogService.clearAllLogs().then(() => {
+        handleGetLogs()
+      })
+    );
   }
 
   function getActionTypeColor(type: string): string {
@@ -60,8 +68,17 @@ function Logs() {
     <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
       <div className='flex gap-3 items-center mb-4'>
         <InputText onChange={handleFilter} type="text" placeholder='Search traces' variation='ultra-rounded' />
-        <div className='flex-1 justify-end flex'>
-          <Button onClick={handleGetLogs}>Verify</Button>
+        <div className='flex gap-3 flex-1 justify-end'>
+          <div className='w-11 h-11'>
+            <Button onClick={handleGetLogs} variation='default-full'>
+                <RefreshCcw className='h-4 w-4' />
+            </Button>
+          </div>
+          <div className='w-11 h-11'>
+            <Button variation='red' onClick={handleClearLogs}>
+              <Trash2 className='h-4 w-4' />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -108,10 +125,6 @@ function Logs() {
                       <Div variation='accordion-content'>
                         <Div variation='accordion-content-grid'>
                           <div>
-                            <span className='text-sm font-semibold text-gray-300'>Message:</span>
-                            <p className='text-sm text-white mt-1'>{log.message}</p>
-                          </div>
-                          <div>
                             <span className='text-sm font-semibold text-gray-300'>Trace ID:</span>
                             <p className='text-sm text-white mt-1'>{log.traceId}</p>
                           </div>
@@ -131,6 +144,13 @@ function Logs() {
                             <span className='text-sm font-semibold text-gray-300'>User ID:</span>
                             <p className='text-sm text-white mt-1'>{log.userId}</p>
                           </div>
+                          {
+                            log.details &&
+                            <div className='col-span-2'>
+                              <span className='text-sm font-semibold'>Details:</span>
+                              <p className='text-sm text-white mt-1 overflow-auto text-wrap p-3 rounded bg-zinc-900'>{log.details}</p>
+                            </div>
+                          }
                         </Div>
                       </Div>
                     </Accordion>

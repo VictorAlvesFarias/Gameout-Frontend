@@ -48,9 +48,14 @@ function Login() {
 
     return loginService.loginPost(data)
       .then(() => {
-        setLoading({ ...loading, login: false })
         context.setIsAuthenticated?.(true)
         navigation('/home')
+      })
+      .catch((error) => {
+        console.error('Login error:', error)
+      })
+      .finally(() => {
+        setLoading({ ...loading, login: false })
       })
   }
 
