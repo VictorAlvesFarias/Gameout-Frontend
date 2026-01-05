@@ -93,9 +93,40 @@ class SaveService extends BaseHttpService {
     }
 
     public async download(params: any, name: string) {
-        const response = await this.download({ api: env, href: "/download-file", params: params }, name)
+        console.log("Downloading file with params:", params);
+        
+        try {
+            const response = await this.get<Blob>({ 
+                api: env, 
+                href: "/download-file", 
+                params: params 
+            }, {
+                ...this.mediators().config(),
+                responseType: 'blob' 
+            })
 
-        toast.success("File downloaded successfully")
+            if (!response || response.size === 0) {
+                toast.error("Downloaded file is empty")
+                return
+            }
+
+            const blob = new Blob([response], { type: 'application/zip' })
+            const url = window.URL.createObjectURL(blob)
+
+            const a = document.createElement("a")
+            a.href = url
+            a.download = `${name}.zip`
+            document.body.appendChild(a)
+            a.click()
+
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(url)
+
+            toast.success("File downloaded successfully")
+        } catch (error) {
+            console.error("Download error:", error)
+            toast.error("Failed to download file")
+        }
     }
 
     public async reprocessFile(appStoredFileId: number) {

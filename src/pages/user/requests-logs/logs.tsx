@@ -27,7 +27,7 @@ function Logs() {
   }
 
   async function handleClearLogs() {
-    setQuery(() => 
+    setQuery(() =>
       applicationLogService.clearAllLogs().then(() => {
         handleGetLogs()
       })
@@ -71,7 +71,7 @@ function Logs() {
         <div className='flex gap-3 flex-1 justify-end'>
           <div className='w-11 h-11'>
             <Button onClick={handleGetLogs} variation='default-full'>
-                <RefreshCcw className='h-4 w-4' />
+              <RefreshCcw className='h-4 w-4' />
             </Button>
           </div>
           <div className='w-11 h-11'>
@@ -84,82 +84,81 @@ function Logs() {
 
       {logs?.length === 0 ? (
         <div className='h-full w-full items-center justify-center flex text-white'>
-          {allRequestsResolved ? (
-            <div className='text-center'>
-              <FileText className='h-16 w-16 mx-auto mb-4 text-gray-500' />
-              <Span>No logs found</Span>
-            </div>
-          ) : (
-            <LoaderCircle className='animate-spin h-8 w-8' />
-          )}
+          <div className='text-center'>
+            <FileText className='h-16 w-16 mx-auto mb-4 text-gray-500' />
+            <Span>No logs found</Span>
+          </div>
         </div>
-      ) : (
-        <div className='space-y-3'>
-          {logs
-            .filter(e =>
-              e.message?.includes(filter) ||
-              e.type?.includes(filter) ||
-              e.traceId.toString()?.includes(filter) ||
-              e.userId?.includes(filter)
-            )
-            .map(log => (
-              <div key={log.id} className='pt-3 rounded flex flex-col relative gap-3'>
-                <AccordionContext>
-                  <AccordionRoot>
-                    <Div variation='accordion-title-root'>
-                      <AccordionTitle>
-                        <div className='py-5 px-6 flex justify-between w-full items-center'>
-                          <div className='flex items-center gap-3'>
-                            <Clock className='h-4 w-4 text-gray-400' />
-                            <span className={`font-semibold ${getActionTypeColor(log.action)}`}>
-                              {log.message}
-                            </span>
-                          </div>
-                          <div className='text-xs text-gray-400'>
-                            {formatDate(log.createDate)} - Trace ID: {log.traceId}
-                          </div>
-                        </div>
-                      </AccordionTitle>
-                    </Div>
-                    <Accordion>
-                      <Div variation='accordion-content'>
-                        <Div variation='accordion-content-grid'>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Trace ID:</span>
-                            <p className='text-sm text-white mt-1'>{log.traceId}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Action:</span>
-                            <p className='text-sm text-white mt-1 break-all'>{log.action}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Created:</span>
-                            <p className='text-sm text-white mt-1'>{formatDate(log.createDate)}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>Updated:</span>
-                            <p className='text-sm text-white mt-1'>{formatDate(log.updateDate)}</p>
-                          </div>
-                          <div>
-                            <span className='text-sm font-semibold text-gray-300'>User ID:</span>
-                            <p className='text-sm text-white mt-1'>{log.userId}</p>
-                          </div>
-                          {
-                            log.details &&
-                            <div className='col-span-2'>
-                              <span className='text-sm font-semibold'>Details:</span>
-                              <p className='text-sm text-white mt-1 overflow-auto text-wrap p-3 rounded bg-zinc-900'>{log.details}</p>
+      ) :
+        allRequestsResolved ? (
+          <div className='space-y-3'>
+            {logs
+              .filter(e =>
+                e.message?.includes(filter) ||
+                e.type?.includes(filter) ||
+                e.traceId.toString()?.includes(filter) ||
+                e.userId?.includes(filter)
+              )
+              .map(log => (
+                <div key={log.id} className='pt-3 rounded flex flex-col relative gap-3'>
+                  <AccordionContext>
+                    <AccordionRoot>
+                      <Div variation='accordion-title-root'>
+                        <AccordionTitle>
+                          <div className='py-5 px-6 flex justify-between w-full items-center'>
+                            <div className='flex items-center gap-3'>
+                              <Clock className='h-4 w-4 text-gray-400' />
+                              <span className={`font-semibold ${getActionTypeColor(log.action)}`}>
+                                {log.message}
+                              </span>
                             </div>
-                          }
-                        </Div>
+                            <div className='text-xs text-gray-400'>
+                              {formatDate(log.createDate)} - Trace ID: {log.traceId}
+                            </div>
+                          </div>
+                        </AccordionTitle>
                       </Div>
-                    </Accordion>
-                  </AccordionRoot>
-                </AccordionContext>
-              </div>
-            ))}
-        </div>
-      )}
+                      <Accordion>
+                        <Div variation='accordion-content'>
+                          <Div variation='accordion-content-grid'>
+                            <div>
+                              <span className='text-sm font-semibold text-gray-300'>Trace ID:</span>
+                              <p className='text-sm text-white mt-1'>{log.traceId}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm font-semibold text-gray-300'>Action:</span>
+                              <p className='text-sm text-white mt-1 break-all'>{log.action}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm font-semibold text-gray-300'>Created:</span>
+                              <p className='text-sm text-white mt-1'>{formatDate(log.createDate)}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm font-semibold text-gray-300'>Updated:</span>
+                              <p className='text-sm text-white mt-1'>{formatDate(log.updateDate)}</p>
+                            </div>
+                            <div>
+                              <span className='text-sm font-semibold text-gray-300'>User ID:</span>
+                              <p className='text-sm text-white mt-1'>{log.userId}</p>
+                            </div>
+                            {
+                              log.details &&
+                              <div className='col-span-2'>
+                                <span className='text-sm font-semibold'>Details:</span>
+                                <p className='text-sm text-white mt-1 overflow-auto text-wrap p-3 rounded bg-zinc-900'>{log.details}</p>
+                              </div>
+                            }
+                          </Div>
+                        </Div>
+                      </Accordion>
+                    </AccordionRoot>
+                  </AccordionContext>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <LoaderCircle className='animate-spin h-8 w-8' />
+        )}
     </Div>
   );
 }

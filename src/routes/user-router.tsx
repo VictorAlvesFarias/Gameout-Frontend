@@ -1,5 +1,5 @@
 import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Key } from "lucide-react";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext, IAuthContextType } from "react-toolkit";
 import SidebarRoot from "../components/sidebar-root";
@@ -28,10 +28,83 @@ import { AuthenticationService } from "typescript-toolkit";
 import { AUTH } from "../config/auth-config";
 import { loginService } from "../services/login-service";
 import Div from "../components/div";
+import { driverService } from "../services/driver-service";
+import { webSocketService } from "../services/web-socket-service";
 
 function UserRouters() {
   const cookies = Cookies.get();
   const navigation = useNavigate()
+  const [driverStatus, setDriverStatus] = useState<'connected' | 'disconnected' | 'error'>('disconnected')
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false)
+
+  const checkDriverStatus = async () => {
+    if (isCheckingStatus) return
+
+    setIsCheckingStatus(true)
+    try {
+      const response = await driverService.checkDriverStatus()
+      if (response?.data === true) {
+        setDriverStatus('connected')
+      } else if (response?.data === false) {
+        setDriverStatus('disconnected')
+      } else {
+        setDriverStatus('error')
+      }
+    } catch (error) {
+      setDriverStatus('error')
+    } finally {
+      setIsCheckingStatus(false)
+    }
+  }
+
+  useEffect(() => {
+    // Verifica o status inicial
+    checkDriverStatus()
+
+    // Configura polling a cada 30 segundos
+    const intervalId = setInterval(() => {
+      checkDriverStatus()
+    }, 30000)
+
+    // Registra o evento WebSocket
+    const handleDriveStatusUpdated = () => {
+      checkDriverStatus()
+    }
+
+    webSocketService.on('DriveStatusUpdated', handleDriveStatusUpdated)
+
+    // Cleanup
+    return () => {
+      clearInterval(intervalId)
+      webSocketService.off('DriveStatusUpdated', handleDriveStatusUpdated)
+    }
+  }, [])
+
+  const getDriverStatusText = () => {
+    switch (driverStatus) {
+      case 'connected':
+        return 'Driver is connected'
+      case 'disconnected':
+        return 'Driver is not connected'
+      case 'error':
+        return 'Connection error'
+      default:
+        return 'Checking...'
+    }
+  }
+
+  const getDriverStatusColor = () => {
+    switch (driverStatus) {
+      case 'connected':
+        return 'text-green-400'
+      case 'disconnected':
+        return 'text-red-400'
+      case 'error':
+        return 'text-red-400'
+      default:
+        return 'text-gray-400'
+    }
+  }
 
   return (
     <SidebarContext>
@@ -44,11 +117,16 @@ function UserRouters() {
             <div className="flex gap-3 items-start flex-col">
               <div className="flex gap-3 items-center">
                 <CircleUser className="w-7 h-7"></CircleUser>
-                <span className="overflow-auto text-ellipsis">
-                  <p>
-                    {cookies.name ?? "User not found"}
+                <div>
+                  <span className="overflow-auto text-ellipsis">
+                    <p>
+                      {cookies.name ?? "User not found"}
+                    </p>
+                  </span>
+                  <p className={`text-xs ${getDriverStatusColor()}`}>
+                    {getDriverStatusText()}
                   </p>
-                </span>
+                </div>
               </div>
             </div>
           </SidebarItem>

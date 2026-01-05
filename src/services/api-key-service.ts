@@ -23,11 +23,8 @@ class ApiKeyService extends BaseHttpService {
     }
 
     public async generateApiKey() {
-        const response = await this.post<IBaseHttpResponseApi<string>>({ api: env, href: "/api/apikey/generate" }, {})
-        response.then(() => {
-            toast.success("API Key generated successfully")
-        })
-        return response
+        const response = this.post<IBaseHttpResponseApi<string>>({ api: env, href: "/api/apikey/generate" }, {})
+        return await response
     }
 
     public async getCurrentApiKey() {
