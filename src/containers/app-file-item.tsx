@@ -43,16 +43,16 @@ function AppFileItem(x: {
 
     return (
         <div className='flex flex-col gap-1'>
+            {x.message &&
+                <span className={`text-xs py-1 rounded ${getProcessingStatusColor(x.status)} bg-opacity-20`}>
+                    {x.message}
+                </span>
+            }
             <div className='flex items-center gap-3'>
                 {x.processing &&
                     <Clock className='h-4 w-4 text-gray-400' />
                 }
                 <p className='font-semibold'>{x.name}</p>
-                {x.message &&
-                    <span className={`text-xs py-1 rounded ${getProcessingStatusColor(x.status)} bg-opacity-20`}>
-                        {x.message}
-                    </span>
-                }
             </div>
             <div className='flex gap-4 text-xs text-gray-400'>
                 <span>Created: {formatDate(x.createDate)}</span>

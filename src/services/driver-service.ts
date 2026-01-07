@@ -13,9 +13,26 @@ class DriverService extends BaseHttpService {
         },
       }),
       catch: (error) => {
-        catchErrors(error, (e, m) => {
-          toast.error(m)
-        })
+        try {
+          let errors = error.response.data.errors
+
+          if (Array.isArray(errors)) {
+            errors.forEach(e =>
+              toast.error(e.message)
+            );
+          }
+          else {
+            const keys = Object.keys(errors);
+            const values = keys.map((key) => errors[key]);
+
+            values.flatMap((item) => {
+              return item.map((error: any) => toast.error(error.message));
+            });
+          }
+        }
+        catch {
+          toast.error("An unexpected error occurred")
+        }
 
         return error
       }
@@ -24,7 +41,7 @@ class DriverService extends BaseHttpService {
 
   public async checkDriverStatus() {
     const result = this.post<IBaseHttpResponseApi<boolean>>({ api: env, href: "/driver-is-connected", params: {} }, {})
-    
+
     return result;
   }
 }

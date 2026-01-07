@@ -33,7 +33,6 @@ function Home() {
   const [allRequestsResolved, setQuery] = useQuery(false)
   const [currentFileId, setCurrentFileId] = useState<number>(0)
   const modalRef = useRef<any>(null)
-  const navigation = useNavigate()
 
   function handleFilter(e: any) {
     setFilter(e.target.value)
@@ -45,7 +44,7 @@ function Home() {
     })
   }
 
-  function handleDeleteSave(id: string) {
+  function handleDeleteSave(id: number) {
     return saveService.remove({ id }).then(e => {
       handleGetSaves()
     })
@@ -62,22 +61,24 @@ function Home() {
   }
 
   function handleUpdate(data: any, id: number) {
-    const newList = [...appFiles]
-    const index = newList.findIndex(item => item.id === id)
-    let newObject = { ...newList[index], ...data }
+    setAppFiles(prev => {
+      const newArray = [...prev]
+      const index = newArray.findIndex(item => item.id === id)
+      const newObject = { ...newArray[index], ...data }
 
-    if (index >= 0) {
-      newList[index] = newObject
-    }
+      if (index >= 0) {
+        newArray[index] = newObject
+      }
 
-    setAppFiles(newList)
+      return newArray
+    })
 
     const updateRequest: IAppFileRequest = {
-      name: newObject.name,
-      path: newObject.path,
-      versionControl: newObject.versionControl,
-      observer: newObject.observer,
-      autoValidateSync: newObject.autoValidateSync
+      name: data.name,
+      path: data.path,
+      versionControl: data.versionControl,
+      observer: data.observer,
+      autoValidateSync: data.autoValidateSync
     }
 
     return saveService.update(updateRequest, id)
@@ -154,7 +155,7 @@ function Home() {
         <div className='flex-1 justify-end flex'>
           <div className='w-11 h-11'>
             <Button onClick={handleGetSaves} variation='default-full'>
-                <RefreshCcw className='h-4 w-4' />
+              <RefreshCcw className='h-4 w-4' />
             </Button>
           </div>
         </div>
@@ -175,7 +176,7 @@ function Home() {
             {
               (
                 appFiles?.filter(e => e.name.includes(filter)).map((x, i: any) =>
-                  <div key={i} className='pt-6 rounded  flex flex-col relative gap-3'>
+                  <div key={x.id} className='pt-6 rounded  flex flex-col relative gap-3'>
                     <AccordionContext>
                       <AccordionRoot>
                         <Div variation='accordion-title-root'>
@@ -191,7 +192,7 @@ function Home() {
                               />
                             </Div>
                           </AccordionTitle>
-                          <Span variation='default-accordion-button' onClick={() => handleDeleteSave(x.id.toString())}>
+                          <Span variation='default-accordion-button' onClick={() => handleDeleteSave(x.id)}>
                             <Trash className='h-5 w-5 text-zinc-500 hover:text-red-500 transition-all' />
                           </Span>
                         </Div>
