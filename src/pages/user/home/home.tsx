@@ -61,6 +61,8 @@ function Home() {
   }
 
   function handleUpdate(data: any, id: number) {
+    let updatedItem: IAppFileResponse | undefined;
+    
     setAppFiles(prev => {
       const newArray = [...prev]
       const index = newArray.findIndex(item => item.id === id)
@@ -68,17 +70,22 @@ function Home() {
 
       if (index >= 0) {
         newArray[index] = newObject
+        updatedItem = newObject
       }
 
       return newArray
     })
 
+    if (!updatedItem) {
+      return Promise.resolve()
+    }
+
     const updateRequest: IAppFileRequest = {
-      name: data.name,
-      path: data.path,
-      versionControl: data.versionControl,
-      observer: data.observer,
-      autoValidateSync: data.autoValidateSync
+      name: updatedItem.name,
+      path: updatedItem.path,
+      versionControl: updatedItem.versionControl,
+      observer: updatedItem.observer,
+      autoValidateSync: updatedItem.autoValidateSync
     }
 
     return saveService.update(updateRequest, id)
