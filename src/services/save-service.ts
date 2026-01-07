@@ -185,6 +185,16 @@ class SaveService extends BaseHttpService {
 
         return response
     }
+
+    public async deleteSoftDeletedItems() {
+        const response = this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-soft-deleted-items" })
+
+        response.then(() => {
+            toast.success("🗑️ All items from trash have been permanently removed")
+        })
+
+        return response
+    }
 }
 
 export const saveService = new SaveService();

@@ -82,15 +82,15 @@ function Logs() {
         </div>
       </div>
 
-      {logs?.length === 0 ? (
-        <div className='h-full w-full items-center justify-center flex text-white'>
-          <div className='text-center'>
-            <FileText className='h-16 w-16 mx-auto mb-4 text-gray-500' />
-            <Span>No logs found</Span>
+      {allRequestsResolved ? (
+        logs?.length === 0 ? (
+          <div className='h-full w-full items-center justify-center flex text-white'>
+            <div className='text-center'>
+              <FileText className='h-16 w-16 mx-auto mb-4 text-gray-500' />
+              <Span>No logs found</Span>
+            </div>
           </div>
-        </div>
-      ) :
-        allRequestsResolved ? (
+        ) : (
           <div className='space-y-3'>
             {logs
               .filter(e =>
@@ -156,9 +156,12 @@ function Logs() {
                 </div>
               ))}
           </div>
-        ) : (
+        )
+      ) : (
+        <div className="flex items-center justify-center h-full w-full">
           <LoaderCircle className='animate-spin h-8 w-8' />
-        )}
+        </div>
+      )}
     </Div>
   );
 }

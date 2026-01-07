@@ -1,4 +1,4 @@
-import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Key } from "lucide-react";
+import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Settings } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext, IAuthContextType } from "react-toolkit";
@@ -23,7 +23,7 @@ import Home from "../pages/user/home/home";
 import InProcessing from "../pages/user/in-processing/in-processing";
 import Logs from "../pages/user/requests-logs/logs";
 import Profile from "../pages/user/profile/profile";
-import ApiKey from "../pages/user/api-key/api-key";
+import Config from "../pages/user/config/config";
 import { AuthenticationService } from "typescript-toolkit";
 import { AUTH } from "../config/auth-config";
 import { loginService } from "../services/login-service";
@@ -155,10 +155,10 @@ function UserRouters() {
             <SidebarHref><FileText />Logs</SidebarHref>
           </SidebarItem>
           <SidebarItem redirect={() => {
-            navigation(ADMIN_ROUTES.API_KEY)
-            return ADMIN_ROUTES.API_KEY
+            navigation(ADMIN_ROUTES.CONFIG)
+            return ADMIN_ROUTES.CONFIG
           }}>
-            <SidebarHref><Key />API Key</SidebarHref>
+            <SidebarHref><Settings />Config</SidebarHref>
           </SidebarItem>
           <ModalContext>
             <div className="flex-1 flex items-end w-full">
@@ -195,7 +195,7 @@ function UserRouters() {
             <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
             <Route path={USER_ROUTES.LOGS} element={<Logs />} />
             <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
-            <Route path={ADMIN_ROUTES.API_KEY} element={<ApiKey />} />
+            <Route path={ADMIN_ROUTES.CONFIG} element={<Config />} />
           </Routes>
         </SidebarContent>
       </Div>

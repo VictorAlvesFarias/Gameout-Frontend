@@ -1,5 +1,5 @@
 const ADMIN_ROUTES = {
-  API_KEY: "/admin/api-key",
+  CONFIG: "/admin/config",
 };
 const USER_ROUTES = {
   ADD: "/add",
