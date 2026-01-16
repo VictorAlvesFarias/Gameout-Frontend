@@ -1,23 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, FileText, LoaderCircle, Trash2, RefreshCcw } from 'lucide-react';
+import { Clock, FileText, Trash2, RefreshCcw } from 'lucide-react';
 import Button from '../../../components/button';
 import Span from '../../../components/Span';
 import Accordion from '../../../components/accordion';
 import AccordionRoot from '../../../components/accordion-root';
 import AccordionTitle from '../../../components/accordion-title';
-import { AccordionContext } from 'react-base-components';
+import { AccordionContext, If } from 'react-base-components';
 import { useQuery } from 'react-toolkit';
 import InputText from '../../../components/input-text';
 import Div from '../../../components/div';
 import { applicationLogService, } from '../../../services/application-log-service';
+import { usePageContext } from '../../../contexts/page-context';
 
 function Logs() {
+  const { setContextPage } = usePageContext();
   const [logs, setLogs] = useState<any[]>([]);
   const [allRequestsResolved, setQuery] = useQuery(false);
   const [filter, setFilter] = useState<string>("");
 
   function handleFilter(e: any) {
     setFilter(e.target.value);
+  }
+
+  function handleLogFilter() {
+    return logs.filter(e =>
+      e.message?.includes(filter) ||
+      e.type?.includes(filter) ||
+      e.traceId.toString()?.includes(filter) ||
+      e.userId?.includes(filter)
+    )
   }
 
   function handleGetLogs() {
@@ -64,6 +75,14 @@ function Logs() {
     setQuery(() => handleGetLogs());
   }, []);
 
+  useEffect(() => {
+    setContextPage({ loading: !allRequestsResolved });
+  }, [allRequestsResolved]);
+
+  useEffect(() => {
+    setContextPage({ pageTitle: 'Logs' });
+  }, []);
+
   return (
     <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
       <div className='flex gap-3 items-center mb-4'>
@@ -82,24 +101,18 @@ function Logs() {
         </div>
       </div>
 
-      {allRequestsResolved ? (
-        logs?.length === 0 ? (
+      <If conditional={allRequestsResolved}>
+        <If conditional={handleLogFilter().length === 0}>
           <div className='h-full w-full items-center justify-center flex text-white'>
             <div className='text-center'>
               <FileText className='h-16 w-16 mx-auto mb-4 text-gray-500' />
               <Span>No logs found</Span>
             </div>
           </div>
-        ) : (
+        </If>
+        <If conditional={handleLogFilter().length > 0}>
           <div className='space-y-3'>
-            {logs
-              .filter(e =>
-                e.message?.includes(filter) ||
-                e.type?.includes(filter) ||
-                e.traceId.toString()?.includes(filter) ||
-                e.userId?.includes(filter)
-              )
-              .map(log => (
+            {handleLogFilter().map(log => (
                 <div key={log.id} className='pt-3 rounded flex flex-col relative gap-3'>
                   <AccordionContext>
                     <AccordionRoot>
@@ -156,12 +169,8 @@ function Logs() {
                 </div>
               ))}
           </div>
-        )
-      ) : (
-        <div className="flex items-center justify-center h-full w-full">
-          <LoaderCircle className='animate-spin h-8 w-8' />
-        </div>
-      )}
+        </If>
+      </If>
     </Div>
   );
 }

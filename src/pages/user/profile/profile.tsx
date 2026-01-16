@@ -13,32 +13,24 @@ import { userService, IUser, IUpdateUserRequest } from '../../../services/user-s
 import Span from '../../../components/Span'
 import Form from '../../../components/Form'
 import { toast } from 'react-toastify'
-import { ModalClose, ModalContext } from 'react-base-components'
+import { ModalClose, ModalContext, If } from 'react-base-components'
 import ModalRoot from '../../../components/modal-root'
 import Div from '../../../components/div'
+import { usePageContext } from '../../../contexts/page-context';
 
-interface ProfileSchema {
-  name: string
-  username: string
-  email: string
-}
-
-interface PasswordSchema {
-  currentPassword: string
-  newPassword: string
-  confirmPassword: string
-}
 
 function Profile() {
+  const { setContextPage } = usePageContext();
   const [finished, setQueries] = useQuery(true)
   const [user, setUser] = useState<IUser | null>(null)
   const modalRef = useRef<any>(null)
 
-  const profileSchema = z.object({
-    name: z.string().nonempty('Required'),
-    username: z.string().nonempty('Required'),
-    email: z.string().nonempty('Required').email('Invalid E-Mail'),
-  })
+  const profileSchema = z
+    .object({
+      name: z.string().nonempty('Required'),
+      username: z.string().nonempty('Required'),
+      email: z.string().nonempty('Required').email('Invalid E-Mail'),
+    })
 
   const passwordSchema = z
     .object({
@@ -51,11 +43,11 @@ function Profile() {
       message: 'Passwords do not match',
     })
 
-  const { register: registerProfile, formState: formStateProfile, handleSubmit: handleSubmitProfile, reset: resetProfile } = useForm<ProfileSchema>({
+  const { register: registerProfile, formState: formStateProfile, handleSubmit: handleSubmitProfile, reset: resetProfile } = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
   })
 
-  const { register: registerPassword, formState: formStatePassword, handleSubmit: handleSubmitPassword, reset: resetPassword } = useForm<PasswordSchema>({
+  const { register: registerPassword, formState: formStatePassword, handleSubmit: handleSubmitPassword, reset: resetPassword } = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
   })
 
@@ -71,7 +63,7 @@ function Profile() {
     })
   }
 
-  function handleUpdateProfile(data: ProfileSchema) {
+  function handleUpdateProfile(data: any) {
     const updateData: IUpdateUserRequest = {
       name: data.name,
       username: data.username,
@@ -84,7 +76,7 @@ function Profile() {
     })
   }
 
-  function handleChangePassword(data: PasswordSchema) {
+  function handleChangePassword(data: any) {
     return userService
       .changePassword({
         currentPassword: data.currentPassword,
@@ -101,18 +93,26 @@ function Profile() {
     setQueries(() => handleGetUser())
   }, [])
 
+  useEffect(() => {
+    setContextPage({ loading: !finished });
+  }, [finished, setContextPage]);
+
+  useEffect(() => {
+    setContextPage({ pageTitle: 'Profile' });
+  }, [setContextPage]);
+
   return (
     <Div variation="in-center">
-      <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50 border border-zinc-700 rounded'>
-        {user ? (
+      <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50'>
+        <If conditional={user != null}>
           <>
             <div className="flex flex-col items-center text-center p-6 gap-3">
               <div className="relative w-28 h-28 rounded-full bg-gradient-to-tr from-zinc-600 to-zinc-400 flex items-center justify-center shadow-md">
                 <User className="w-12 h-12 text-main-black-900" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight">{user.name}</h2>
-                <p className="text-zinc-400 text-sm">@{user.username}</p>
+                <h2 className="text-2xl font-bold tracking-tight">{user?.name}</h2>
+                <p className="text-zinc-400 text-sm">@{user?.username}</p>
               </div>
             </div>
             <div className='max-w-xl w-full'>
@@ -187,11 +187,7 @@ function Profile() {
               </ModalRoot>
             </ModalContext>
           </>
-        ) : (
-          <div className="flex items-center justify-center p-20">
-            <LoaderCircle className="animate-spin w-8 h-8 text-zinc-400" />
-          </div>
-        )}
+        </If>
       </Div>
     </Div>
   )

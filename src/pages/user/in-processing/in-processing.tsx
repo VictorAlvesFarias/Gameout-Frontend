@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { LoaderCircle, Clock, FileText, RefreshCcw, AlertCircle, RotateCcw, Trash2, CheckCircle } from 'lucide-react'
+import { Clock, FileText, RefreshCcw, AlertCircle, RotateCcw, Trash2, CheckCircle } from 'lucide-react'
 import Span from '../../../components/Span'
 import Button from '../../../components/button'
 import InputText from '../../../components/input-text'
 import Accordion from '../../../components/accordion'
 import AccordionRoot from '../../../components/accordion-root'
-import { AccordionTitleContainer } from "react-base-components"
-import { AccordionContext } from "react-base-components"
+import { AccordionContext, AccordionTitleContainer, If } from "react-base-components"
 import { useQuery } from "react-toolkit"
 import { toast } from 'react-toastify'
 import { webSocketService } from '../../../services/web-socket-service'
@@ -15,20 +14,27 @@ import Div from '../../../components/div'
 import AppStoredFileItem from '../../../containers/app-stored-file-item'
 import { saveService } from '../../../services/save-service'
 import { IAppStoredFileResponse } from '../../../interfaces/IAppStoredFileResponse'
-
-interface WebSocketRequest {
-  Event: string
-  Body: any
-}
+import { usePageContext } from '../../../contexts/page-context';
 
 function InProcessing() {
+  const pageContext = usePageContext();
   const [storedFiles, setStoredFiles] = useState<IAppStoredFileResponse[]>([])
   const [allRequestsResolved, setQuery] = useQuery(false)
   const [filter, setFilter] = useState<string>("")
-  const wsRef = useRef<WebSocket | null>(null)
 
   function handleFilter(e: any) {
     setFilter(e.target.value)
+  }
+
+  function handleStoredFileFilter() {
+    return storedFiles.filter(e =>
+      e.name?.toLowerCase().includes(filter.toLowerCase()) ||
+      e.path?.toLowerCase().includes(filter.toLowerCase()) ||
+      e.id.toString().includes(filter) ||
+      e.appFileId.toString().includes(filter) ||
+      (e.storedFileId && e.storedFileId.toString().includes(filter)) ||
+      (e as any).error?.toLowerCase().includes(filter.toLowerCase())
+    )
   }
 
   function handleGetSaves() {
@@ -87,22 +93,22 @@ function InProcessing() {
   useEffect(() => {
     console.log("Setting up websocket listeners")
 
-    const newsFilesRequestPing = (req: any) => {
+    function newsFilesRequestPing(req: any) {
       toast.success('A new file in processing.')
       setQuery(() => handleGetSaves())
     }
 
-    const appFileUpdatedPing = (req: any) => {
+    function appFileUpdatedPing(req: any) {
       toast.success('A new file is processed.')
       setQuery(() => handleGetSaves())
     }
 
-    const appFileErrorPing = (req: any) => {
+    function appFileErrorPing(req: any) {
       toast.error('A file processing error occurred.')
       setQuery(() => handleGetSaves())
     }
 
-    const appFileStatusUpdatePing = (req: any) => {
+    function appFileStatusUpdatePing(req: any) {
       toast.success(`Status verified successfully`)
       setQuery(() => handleGetSaves())
     }
@@ -120,6 +126,9 @@ function InProcessing() {
     }
   }, [])
 
+  useEffect(() => {
+    pageContext.setContextPage({ pageTitle: 'In Processing' });
+  }, [pageContext.setContextPage]);
 
   return (
     <Div variation='in-start' className=' bg-zinc-900 bg-opacity-50 '>
@@ -128,32 +137,22 @@ function InProcessing() {
         <div className='flex-1 justify-end flex'>
           <div className='w-11 h-11'>
             <Button onClick={handleGetSaves} variation='default-full'>
-                <RefreshCcw className='h-4 w-4' />
+              <RefreshCcw className='h-4 w-4' />
             </Button>
           </div>
         </div>
       </div>
 
-      {storedFiles.length === 0 ? (
+      <If conditional={handleStoredFileFilter().length === 0}>
         <div className='h-full w-full flex justify-center items-center text-white'>
-          {allRequestsResolved ? (
-            <div className='text-center'>
-              <Span>No files in processing</Span>
-            </div>
-          ) : (
-            <LoaderCircle className='animate-spin h-8 w-8' />
-          )}
+          <div className='text-center'>
+            <Span>No files in processing</Span>
+          </div>
         </div>
-      ) : (
+      </If>
+      <If conditional={handleStoredFileFilter().length > 0}>
         <div className='space-y-3'>
-          {storedFiles.filter(e =>
-            e.name?.toLowerCase().includes(filter.toLowerCase()) ||
-            e.path?.toLowerCase().includes(filter.toLowerCase()) ||
-            e.id.toString().includes(filter) ||
-            e.appFileId.toString().includes(filter) ||
-            (e.storedFileId && e.storedFileId.toString().includes(filter)) ||
-            (e as any).error?.toLowerCase().includes(filter.toLowerCase())
-          ).map((x, i) => (
+          {handleStoredFileFilter().map((x, i) => (
             <div key={i} className='pt-3 rounded flex flex-col relative gap-3'>
               <AccordionContext>
                 <AccordionRoot>
@@ -228,7 +227,7 @@ function InProcessing() {
             </div>
           ))}
         </div>
-      )}
+      </If>
     </Div>
   )
 }

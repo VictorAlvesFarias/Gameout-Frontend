@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { LoaderCircle, Key, Copy, Check, RefreshCcw, Trash2, Settings } from 'lucide-react'
+import { Key, Copy, Check, RefreshCcw, Trash2, Settings } from 'lucide-react'
 import Button from '../../../components/button'
 import Div from '../../../components/div'
 import Span from '../../../components/Span'
@@ -7,10 +7,12 @@ import { apiKeyService } from '../../../services/api-key-service'
 import { saveService } from '../../../services/save-service'
 import { useQuery } from 'react-toolkit'
 import { toast } from 'react-toastify'
-import { ModalContext, ModalOpen, ModalClose } from 'react-base-components'
+import { ModalContext, ModalOpen, ModalClose, If } from 'react-base-components'
 import ModalRoot from '../../../components/modal-root'
+import { usePageContext } from '../../../contexts/page-context';
 
 function Config() {
+    const pageContext = usePageContext();
     const [apiKey, setApiKey] = useState<string | null>(null)
     const [copied, setCopied] = useState(false)
     const [finished, setQuery] = useQuery(false)
@@ -51,10 +53,14 @@ function Config() {
         setQuery(() => handleGetCurrentApiKey())
     }, [])
 
+    useEffect(() => {
+        pageContext.setContextPage({ pageTitle: 'Config' });
+    }, [pageContext.setContextPage]);
+
     return (
         <Div variation="in-center">
-            <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50 border border-zinc-700 rounded'>
-                {finished ? (
+            <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50'>
+                <If conditional={finished}>
                     <div className='max-w-xl gap-9 flex flex-col p-6'>
                         <div className='flex items-center gap-3'>
                             <Settings className='h-5 w-5 text-zinc-400' />
@@ -136,11 +142,7 @@ function Config() {
                             </ModalContext>
                         </div>
                     </div>
-                ) : (
-                    <div className="flex items-center justify-center p-20">
-                        <LoaderCircle className="animate-spin w-8 h-8 text-zinc-400" />
-                    </div>
-                )}
+                </If>
             </Div>
         </Div>
     )

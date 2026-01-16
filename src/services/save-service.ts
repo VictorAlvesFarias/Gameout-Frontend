@@ -113,33 +113,22 @@ class SaveService extends BaseHttpService {
         console.log("Downloading file with params:", params);
 
         try {
-            const response = await this.get<Blob>({
+            // Generate signed URL through authenticated endpoint
+            const response = await this.get<IBaseHttpResponseApi<string>>({
                 api: env,
-                href: "/download-file",
+                href: "/generate-download-url",
                 params: params
-            }, {
-                ...this.mediators().config(),
-                responseType: 'blob'
             })
 
-            if (!response || response.size === 0) {
-                toast.error("Downloaded file is empty")
+            if (!response || !response.data) {
+                toast.error("Failed to generate download URL")
                 return
             }
 
-            const blob = new Blob([response], { type: 'application/zip' })
-            const url = window.URL.createObjectURL(blob)
+            // Trigger browser native download using signed URL (no auth headers needed)
+            window.location.href = response.data
 
-            const a = document.createElement("a")
-            a.href = url
-            a.download = `${name}.zip`
-            document.body.appendChild(a)
-            a.click()
-
-            document.body.removeChild(a)
-            window.URL.revokeObjectURL(url)
-
-            toast.success("File downloaded successfully")
+            toast.success("Download started")
         } catch (error) {
             console.error("Download error:", error)
             toast.error("Failed to download file")

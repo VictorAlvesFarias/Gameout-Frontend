@@ -24,12 +24,16 @@ import InProcessing from "../pages/user/in-processing/in-processing";
 import Logs from "../pages/user/requests-logs/logs";
 import Profile from "../pages/user/profile/profile";
 import Config from "../pages/user/config/config";
+import Versions from "../pages/user/versions/versions";
 import { AuthenticationService } from "typescript-toolkit";
 import { AUTH } from "../config/auth-config";
 import { loginService } from "../services/login-service";
 import Div from "../components/div";
 import { driverService } from "../services/driver-service";
 import { webSocketService } from "../services/web-socket-service";
+import { usePageContext } from "../contexts/page-context";
+import TitlePage from "../containers/title-page";
+import LoadingContainer from "../containers/loading-container";
 
 function UserRouters() {
   const cookies = Cookies.get();
@@ -37,23 +41,61 @@ function UserRouters() {
   const [driverStatus, setDriverStatus] = useState<'connected' | 'disconnected' | 'error'>('disconnected')
   const [isCheckingStatus, setIsCheckingStatus] = useState(false)
 
-  const checkDriverStatus = async () => {
-    if (isCheckingStatus) return
+  async function checkDriverStatus() {
+    if (isCheckingStatus) {
+      return
+    }
 
     setIsCheckingStatus(true)
+
     try {
       const response = await driverService.checkDriverStatus()
+
       if (response?.data === true) {
         setDriverStatus('connected')
-      } else if (response?.data === false) {
+      }
+      else if (response?.data === false) {
         setDriverStatus('disconnected')
-      } else {
+      }
+      else {
         setDriverStatus('error')
       }
-    } catch (error) {
+    }
+    catch (error) {
       setDriverStatus('error')
-    } finally {
+    }
+    finally {
       setIsCheckingStatus(false)
+    }
+  }
+
+  function getDriverStatusText() {
+    if (driverStatus == 'connected') {
+      return 'Driver is connected'
+    }
+    else if (driverStatus == 'disconnected') {
+      return 'Driver is not connected'
+    }
+    else if (driverStatus == 'error') {
+      return 'Connection error'
+    }
+    else {
+      return 'Checking...'
+    }
+  }
+
+  function getDriverStatusColor() {
+    if (driverStatus == 'connected') {
+      return 'text-green-400'
+    }
+    else if (driverStatus == 'disconnected') {
+      return 'text-red-400'
+    }
+    else if (driverStatus == 'error') {
+      return 'text-red-400'
+    }
+    else {
+      return 'text-gray-400'
     }
   }
 
@@ -67,7 +109,7 @@ function UserRouters() {
     }, 30000)
 
     // Registra o evento WebSocket
-    const handleDriveStatusUpdated = () => {
+    function handleDriveStatusUpdated() {
       checkDriverStatus()
     }
 
@@ -79,32 +121,6 @@ function UserRouters() {
       webSocketService.off('DriveStatusUpdated', handleDriveStatusUpdated)
     }
   }, [])
-
-  const getDriverStatusText = () => {
-    switch (driverStatus) {
-      case 'connected':
-        return 'Driver is connected'
-      case 'disconnected':
-        return 'Driver is not connected'
-      case 'error':
-        return 'Connection error'
-      default:
-        return 'Checking...'
-    }
-  }
-
-  const getDriverStatusColor = () => {
-    switch (driverStatus) {
-      case 'connected':
-        return 'text-green-400'
-      case 'disconnected':
-        return 'text-red-400'
-      case 'error':
-        return 'text-red-400'
-      default:
-        return 'text-gray-400'
-    }
-  }
 
   return (
     <SidebarContext>
@@ -189,17 +205,24 @@ function UserRouters() {
           </div>
         </SidebarHamburguer>
         <SidebarContent>
-          <Routes>
-            <Route path={USER_ROUTES.ADD} element={<Add />} />
-            <Route path={USER_ROUTES.HOME} element={<Home />} />
-            <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
-            <Route path={USER_ROUTES.LOGS} element={<Logs />} />
-            <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
-            <Route path={ADMIN_ROUTES.CONFIG} element={<Config />} />
-          </Routes>
+          <div className="flex flex-col h-full w-full">
+            <TitlePage />
+            <div className="flex-1 overflow-auto relative">
+              <LoadingContainer />
+              <Routes>
+                <Route path={USER_ROUTES.ADD} element={<Add />} />
+                <Route path={USER_ROUTES.HOME} element={<Home />} />
+                <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
+                <Route path={USER_ROUTES.LOGS} element={<Logs />} />
+                <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
+                <Route path={ADMIN_ROUTES.CONFIG} element={<Config />} />
+                <Route path={USER_ROUTES.VERSIONS} element={<Versions />} />
+              </Routes>
+            </div>
+          </div>
         </SidebarContent>
       </Div>
-    </SidebarContext>
+    </SidebarContext >
   );
 }
 

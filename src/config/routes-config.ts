@@ -9,6 +9,7 @@ const USER_ROUTES = {
   SIGNUP: "/signup",
   IN_PROCESSING: "/in-processing",
   LOGS: "/logs",
+  VERSIONS: "/versions/:id",
 };
 
 export {

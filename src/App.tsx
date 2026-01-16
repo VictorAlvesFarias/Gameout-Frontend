@@ -11,6 +11,7 @@ import { loginService } from './services/login-service';
 import { AUTH } from './config/auth-config';
 import { AuthenticationService } from 'typescript-toolkit'
 import 'react-toastify/dist/ReactToastify.css';
+import { PageProvider } from './contexts/page-context';
 
 function App() {
   const token = Cookies.get('token');
@@ -52,18 +53,20 @@ function App() {
   return (
     <Router>
       <BaseProvider>
-        <AuthProvider
-          claims={JSON.parse(permissions ?? '[]')}
-          token={token ?? null}
-          onInit={onInit}
-        >
-          <ToastContainer />
-          <Routes>
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="/*" element={<UserRouter />} />
-          </Routes>
-        </AuthProvider>
+        <PageProvider>
+          <AuthProvider
+            claims={JSON.parse(permissions ?? '[]')}
+            token={token ?? null}
+            onInit={onInit}
+          >
+            <ToastContainer />
+            <Routes>
+              <Route path="login" element={<Login />} />
+              <Route path="signup" element={<Signup />} />
+              <Route path="/*" element={<UserRouter />} />
+            </Routes>
+          </AuthProvider>
+        </PageProvider>
       </BaseProvider>
     </Router>
   );

@@ -10,8 +10,6 @@ function AppStoredFileItem(x: {
     message?: string;
     version?: string;
 }) {
-        console.log(x)
-
     function formatDate(dateString: string): string {
         return new Date(dateString).toLocaleString('en-US', {
             year: 'numeric',
