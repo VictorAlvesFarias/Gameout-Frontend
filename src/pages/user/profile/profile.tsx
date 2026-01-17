@@ -21,7 +21,7 @@ import { usePageContext } from '../../../contexts/page-context';
 
 function Profile() {
   const { setContextPage } = usePageContext();
-  const [finished, setQueries] = useQuery(true)
+  const [allRequestsResolved, setQueries] = useQuery(true)
   const [user, setUser] = useState<IUser | null>(null)
   const modalRef = useRef<any>(null)
 
@@ -94,8 +94,8 @@ function Profile() {
   }, [])
 
   useEffect(() => {
-    setContextPage({ loading: !finished });
-  }, [finished, setContextPage]);
+    setContextPage({ loading: !allRequestsResolved });
+  }, [allRequestsResolved, setContextPage]);
 
   useEffect(() => {
     setContextPage({ pageTitle: 'Profile' });
@@ -104,7 +104,7 @@ function Profile() {
   return (
     <Div variation="in-center">
       <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50'>
-        <If conditional={user != null}>
+        <If conditional={user != null && allRequestsResolved}>
           <>
             <div className="flex flex-col items-center text-center p-6 gap-3">
               <div className="relative w-28 h-28 rounded-full bg-gradient-to-tr from-zinc-600 to-zinc-400 flex items-center justify-center shadow-md">
@@ -138,7 +138,7 @@ function Profile() {
                 </div>
 
                 <div className="flex justify-between items-center mt-3 flex-wrap gap-4">
-                  <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!finished}>
+                  <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved}>
                     Save Changes
                   </Button>
                   <div onClick={() => modalRef?.current?.open(true)} className="text-sm text-zinc-400 hover:text-white cursor-pointer transition-colors">
@@ -173,7 +173,7 @@ function Profile() {
                       <Span variation="error">{formStatePassword.errors.confirmPassword?.message}</Span>
                     </InputRoot>
                     <div className="flex gap-3 mt-3">
-                      <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!finished} type="submit">
+                      <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved} type="submit">
                         Save
                       </Button>
                       <ModalClose className='w-full'>

@@ -146,12 +146,12 @@ function Home() {
           </div>
         </div>
       </div>
-      <If conditional={handleAppFileFilter().length === 0}>
+      <If conditional={handleAppFileFilter().length === 0 && allRequestsResolved}>
         <div className='h-full w-full items-center justify-center flex text-white'>
           <Span>Results not found</Span>
         </div>
       </If>
-      <If conditional={handleAppFileFilter().length > 0}>
+      <If conditional={handleAppFileFilter().length > 0 && allRequestsResolved}>
         {
           handleAppFileFilter().map((x, i: any) =>
             <div key={x.id} className='pt-6 rounded  flex flex-col relative gap-3'>

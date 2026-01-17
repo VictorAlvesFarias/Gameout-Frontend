@@ -120,75 +120,75 @@ function Versions() {
                     </Button>
                 </div>
             </div>
-            <If conditional={handleStoredFileFilter().length === 0}>
+            <If conditional={handleStoredFileFilter().length === 0 && allRequestsResolved}>
                 <div className='h-full w-full items-center justify-center flex text-white'>
                     <Span>No versions found</Span>
                 </div>
             </If>
-            <If conditional={handleStoredFileFilter().length > 0}>
+            <If conditional={handleStoredFileFilter().length > 0 && allRequestsResolved}>
                 {
-                            handleStoredFileFilter().map((x, i: any) =>
-                                <div key={x.id} className='pt-6 rounded flex flex-col relative gap-3'>
-                                    <AccordionContext>
-                                        <AccordionRoot>
-                                            <Div variation='accordion-title-root'>
-                                                <AccordionTitle>
-                                                    <Div variation='accordion-content'>
-                                                        <div className='flex flex-col'>
-                                                            <div className='flex gap-3'>
-                                                                <p className='font-bold'>Version:</p>
-                                                                <p>
-                                                                    {i === 0 ? "Latest" : i.toString()}
-                                                                </p>
-                                                            </div>
-                                                            <div className='flex gap-3'>
-                                                                <p className='font-bold'>Date:</p>
-                                                                <p>{new Date(x.updateDate).toLocaleString('pt-BR').replace(",", " - ")}</p>
-                                                            </div>
-                                                            <div className='flex gap-3'>
-                                                                <p className='font-bold'>Size:</p>
-                                                                <p>{x.sizeInBytes}</p>
-                                                            </div>
-                                                        </div>
-                                                    </Div>
-                                                </AccordionTitle>
-                                                <Span variation='default-accordion-button' onClick={() => modalRefs.current[x.id]?.open()}>
-                                                    <Trash className='h-5 w-5 text-zinc-500 hover:text-red-500 transition-all' />
-                                                </Span>
-                                            </Div>
-                                            <ModalContext ref={(el) => (modalRefs.current[x.id] = el)}>
-                                                <ModalRoot>
-                                                    <div className='shadow-lg p-6 bg-main-black-800 flex flex-col gap-3 rounded text-white'>
-                                                        <h3 className='text-lg font-semibold'>Confirm Deletion</h3>
-                                                        <p className='text-sm text-gray-300'>
-                                                            Are you sure you want to delete this version? This action cannot be undone.
+                    handleStoredFileFilter().map((x, i: any) =>
+                        <div key={x.id} className='pt-6 rounded flex flex-col relative gap-3'>
+                            <AccordionContext>
+                                <AccordionRoot>
+                                    <Div variation='accordion-title-root'>
+                                        <AccordionTitle>
+                                            <Div variation='accordion-content'>
+                                                <div className='flex flex-col'>
+                                                    <div className='flex gap-3'>
+                                                        <p className='font-bold'>Version:</p>
+                                                        <p>
+                                                            {i === 0 ? "Latest" : i.toString()}
                                                         </p>
-                                                        <div className='flex justify-between w-full mt-6 gap-3'>
-                                                            <ModalClose callback={() => handleDeleteStoredFile(x.id)} className='flex justify-between flex-1'>
-                                                                <Button variation="red">Yes, Delete</Button>
-                                                            </ModalClose>
-                                                            <ModalClose className='flex justify-between flex-1'>
-                                                                <Button variation='default-full'>Cancel</Button>
-                                                            </ModalClose>
-                                                        </div>
                                                     </div>
-                                                </ModalRoot>
-                                            </ModalContext>
-                                            <Accordion>
-                                                <Div variation='accordion-content'>
-                                                    <div className='w-fit'>
-                                                        <Button onClick={() => handleDownload(x.id)} variation='modal'>
-                                                            Download
-                                                        </Button>
+                                                    <div className='flex gap-3'>
+                                                        <p className='font-bold'>Date:</p>
+                                                        <p>{new Date(x.updateDate).toLocaleString('pt-BR').replace(",", " - ")}</p>
                                                     </div>
-                                                </Div>
-                                            </Accordion>
-                                        </AccordionRoot>
-                                    </AccordionContext>
-                                </div>
-                            )
-                        }
-                </If>
+                                                    <div className='flex gap-3'>
+                                                        <p className='font-bold'>Size:</p>
+                                                        <p>{x.sizeInBytes}</p>
+                                                    </div>
+                                                </div>
+                                            </Div>
+                                        </AccordionTitle>
+                                        <Span variation='default-accordion-button' onClick={() => modalRefs.current[x.id]?.open()}>
+                                            <Trash className='h-5 w-5 text-zinc-500 hover:text-red-500 transition-all' />
+                                        </Span>
+                                    </Div>
+                                    <ModalContext ref={(el) => (modalRefs.current[x.id] = el)}>
+                                        <ModalRoot>
+                                            <div className='shadow-lg p-6 bg-main-black-800 flex flex-col gap-3 rounded text-white'>
+                                                <h3 className='text-lg font-semibold'>Confirm Deletion</h3>
+                                                <p className='text-sm text-gray-300'>
+                                                    Are you sure you want to delete this version? This action cannot be undone.
+                                                </p>
+                                                <div className='flex justify-between w-full mt-6 gap-3'>
+                                                    <ModalClose callback={() => handleDeleteStoredFile(x.id)} className='flex justify-between flex-1'>
+                                                        <Button variation="red">Yes, Delete</Button>
+                                                    </ModalClose>
+                                                    <ModalClose className='flex justify-between flex-1'>
+                                                        <Button variation='default-full'>Cancel</Button>
+                                                    </ModalClose>
+                                                </div>
+                                            </div>
+                                        </ModalRoot>
+                                    </ModalContext>
+                                    <Accordion>
+                                        <Div variation='accordion-content'>
+                                            <div className='w-fit'>
+                                                <Button onClick={() => handleDownload(x.id)} variation='modal'>
+                                                    Download
+                                                </Button>
+                                            </div>
+                                        </Div>
+                                    </Accordion>
+                                </AccordionRoot>
+                            </AccordionContext>
+                        </div>
+                    )
+                }
+            </If>
         </Div>
     )
 }

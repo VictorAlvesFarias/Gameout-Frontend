@@ -143,14 +143,14 @@ function InProcessing() {
         </div>
       </div>
 
-      <If conditional={handleStoredFileFilter().length === 0}>
+      <If conditional={handleStoredFileFilter().length === 0 && allRequestsResolved}>
         <div className='h-full w-full flex justify-center items-center text-white'>
           <div className='text-center'>
             <Span>No files in processing</Span>
           </div>
         </div>
       </If>
-      <If conditional={handleStoredFileFilter().length > 0}>
+      <If conditional={handleStoredFileFilter().length > 0 && allRequestsResolved}>
         <div className='space-y-3'>
           {handleStoredFileFilter().map((x, i) => (
             <div key={i} className='pt-3 rounded flex flex-col relative gap-3'>
