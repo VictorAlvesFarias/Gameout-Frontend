@@ -1,7 +1,6 @@
 import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
 import { env } from "../environment";
 import { AUTH } from "../config/auth-config";
-import { toast } from "react-toastify";
 
 enum AppFileActionType {
     InsertFile = 0,
@@ -52,10 +51,6 @@ class LogService extends BaseHttpService {
                 },
             }),
             catch: (error) => {
-                catchErrors(error, (e, m) => {
-                    toast.error(m)
-                })
-
                 return error
             }
         }))

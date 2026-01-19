@@ -1,4 +1,4 @@
-import { FilePlus, ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Settings } from "lucide-react";
+import { ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Settings } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext, IAuthContextType } from "react-toolkit";
@@ -18,7 +18,6 @@ import ModalRoot from '../components/modal-root'
 import { ModalOpen } from "react-base-components"
 import { ModalClose } from "react-base-components"
 import Button from "../components/button";
-import Add from "../pages/user/add/add";
 import Home from "../pages/user/home/home";
 import InProcessing from "../pages/user/in-processing/in-processing";
 import Logs from "../pages/user/requests-logs/logs";
@@ -100,22 +99,18 @@ function UserRouters() {
   }
 
   useEffect(() => {
-    // Verifica o status inicial
     checkDriverStatus()
 
-    // Configura polling a cada 30 segundos
     const intervalId = setInterval(() => {
       checkDriverStatus()
     }, 30000)
 
-    // Registra o evento WebSocket
     function handleDriveStatusUpdated() {
       checkDriverStatus()
     }
 
     webSocketService.on('DriveStatusUpdated', handleDriveStatusUpdated)
 
-    // Cleanup
     return () => {
       clearInterval(intervalId)
       webSocketService.off('DriveStatusUpdated', handleDriveStatusUpdated)
@@ -153,12 +148,6 @@ function UserRouters() {
             <SidebarHref><SwatchBook />Home</SidebarHref>
           </SidebarItem>
           <SidebarItem redirect={() => {
-            navigation(USER_ROUTES.ADD)
-            return USER_ROUTES.ADD
-          }}>
-            <SidebarHref><FilePlus />Add</SidebarHref>
-          </SidebarItem>
-          <SidebarItem redirect={() => {
             navigation(USER_ROUTES.IN_PROCESSING)
             return USER_ROUTES.IN_PROCESSING
           }}>
@@ -189,7 +178,7 @@ function UserRouters() {
                 <p>Are you sure you want to leave?</p>
                 <div className='flex justify-between w-full mt-6 gap-3'>
                   <ModalClose callback={() => loginService.logout()} className='flex justify-between flex-1'>
-                    <Button variation="default-full">Exit</Button>
+                    <Button className='w-full'>Exit</Button>
                   </ModalClose>
                   <ModalClose className='flex justify-between flex-1'>
                     <Button variation='red'>Cancel</Button>
@@ -210,7 +199,6 @@ function UserRouters() {
             <div className="flex-1 overflow-auto relative">
               <LoadingContainer />
               <Routes>
-                <Route path={USER_ROUTES.ADD} element={<Add />} />
                 <Route path={USER_ROUTES.HOME} element={<Home />} />
                 <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
                 <Route path={USER_ROUTES.LOGS} element={<Logs />} />

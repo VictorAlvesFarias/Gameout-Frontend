@@ -60,6 +60,8 @@ function Versions() {
         return saveService.removeStoredFile({ id: storedFileId }).then(() => {
             toast.success('Version deleted successfully');
             handleGetStoredFiles();
+        }).catch(() => {
+            toast.error('Failed to delete version')
         })
     }
 
@@ -71,6 +73,12 @@ function Versions() {
         }
 
         saveService.download({ id: storedFileId }, appStoredFile.name)
+            .then(() => {
+                toast.success('Download started')
+            })
+            .catch(() => {
+                toast.error('Failed to download file')
+            })
     }
 
     function handleSingleSync() {
@@ -83,6 +91,8 @@ function Versions() {
         return saveService.singleSync({ idAppFile }).then(() => {
             toast.success('Sync started successfully');
             navigate(USER_ROUTES.HOME);
+        }).catch(() => {
+            toast.error('Failed to start sync')
         })
     }
 
@@ -122,10 +132,10 @@ function Versions() {
             </div>
             <If conditional={handleStoredFileFilter().length === 0 && allRequestsResolved}>
                 <div className='h-full w-full items-center justify-center flex text-white'>
-                    <Span>No versions found</Span>
+                    <Span>Results not found</Span>
                 </div>
             </If>
-            <If conditional={handleStoredFileFilter().length > 0 && allRequestsResolved}>
+            <If conditional={handleStoredFileFilter().length > 0}>
                 {
                     handleStoredFileFilter().map((x, i: any) =>
                         <div key={x.id} className='pt-6 rounded flex flex-col relative gap-3'>
@@ -168,7 +178,7 @@ function Versions() {
                                                         <Button variation="red">Yes, Delete</Button>
                                                     </ModalClose>
                                                     <ModalClose className='flex justify-between flex-1'>
-                                                        <Button variation='default-full'>Cancel</Button>
+                                                        <Button>Cancel</Button>
                                                     </ModalClose>
                                                 </div>
                                             </div>
@@ -177,7 +187,7 @@ function Versions() {
                                     <Accordion>
                                         <Div variation='accordion-content'>
                                             <div className='w-fit'>
-                                                <Button onClick={() => handleDownload(x.id)} variation='modal'>
+                                                <Button onClick={() => handleDownload(x.id)} >
                                                     Download
                                                 </Button>
                                             </div>

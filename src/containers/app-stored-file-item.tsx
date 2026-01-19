@@ -24,19 +24,49 @@ function AppStoredFileItem(x: {
     function getProcessingStatusColor(status?: number): string {
         console.log(x.name)
 
-        if (status == 2) {
-            return 'text-red-400';
+        if (status == 1) {
+            return 'text-yellow-400'; // Pending
         }
 
-        if (status == 1) {
-            return 'text-yellow-400';
+        if (status == 2) {
+            return 'text-cyan-400'; // Processing
         }
 
         if (status == 3) {
-            return 'text-green-400';
+            return 'text-green-400'; // Complete
+        }
+
+        if (status == 4) {
+            return 'text-red-400'; // Error
+        }
+
+        if (status == 5) {
+            return 'text-purple-400'; // PathNotFounded
+        }
+
+        if (status == 6) {
+            return 'text-orange-400'; // LockedFiles
         }
 
         return ""
+    }
+
+    function getStatusMessage(message?: string, status?: number): string {
+        // Se a mensagem vier do backend e não for um número, usa ela
+        if (message && isNaN(Number(message))) {
+            return message;
+        }
+
+        // Caso contrário, gera a mensagem baseada no status
+        switch (status) {
+            case 1: return 'Pending';
+            case 2: return 'Items in processing';
+            case 3: return 'Synced';
+            case 4: return 'Error during processing';
+            case 5: return 'Path not founded';
+            case 6: return 'Locked files';
+            default: return message || '';
+        }
     }
 
     return (
@@ -46,9 +76,9 @@ function AppStoredFileItem(x: {
                     <Clock className='h-4 w-4 text-gray-400' />
                 }
                 <p className='font-semibold'>{x.name}</p>
-                {x.message &&
+                {(x.message || x.status) &&
                     <span className={`text-xs py-1 rounded ${getProcessingStatusColor(x.status)} bg-opacity-20`}>
-                        {x.message}
+                        {getStatusMessage(x.message, x.status)}
                     </span>
                 }
             </div>

@@ -23,6 +23,8 @@ function Config() {
                 setApiKey(response.data)
                 toast.info('🔑 New key generated! Remember to update the Driver appsettings.json file')
             }
+        }).catch(() => {
+            toast.error('Failed to generate API key')
         }))
     }
 
@@ -31,6 +33,8 @@ function Config() {
             if (response.data) {
                 setApiKey(response.data)
             }
+        }).catch(() => {
+            toast.error('Failed to load API key')
         })
     }
 
@@ -46,6 +50,8 @@ function Config() {
     function handleDeleteSoftDeletedItems() {
         setQuery(() => saveService.deleteSoftDeletedItems().then(() => {
             toast.success('🗑️ Trash emptied successfully!')
+        }).catch(() => {
+            toast.error('Failed to empty trash')
         }))
     }
 
@@ -83,7 +89,7 @@ function Config() {
                                 <div className='min-w-11 min-h-11'>
                                     {apiKey && (
                                         <Button
-                                            variation='default-full'
+                                            className='w-full'
                                             onClick={handleGenerateApiKey}
                                         >
                                             <RefreshCcw className='h-4 w-4' />
@@ -93,7 +99,7 @@ function Config() {
                                 <div className='min-w-11 min-h-11'>
                                     {apiKey && (
                                         <Button
-                                            variation='default-full'
+                                            className='w-full'
                                             onClick={handleCopyToClipboard}
                                         >
                                             {copied ? (
@@ -134,7 +140,7 @@ function Config() {
                                                 <Button variation="red">Yes, Empty Trash</Button>
                                             </ModalClose>
                                             <ModalClose className='flex justify-between flex-1'>
-                                                <Button variation='default-full'>Cancel</Button>
+                                                <Button className='w-full'>Cancel</Button>
                                             </ModalClose>
                                         </div>
                                     </div>

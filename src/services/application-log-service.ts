@@ -1,7 +1,6 @@
 import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
 import { env } from "../environment";
 import { AUTH } from "../config/auth-config";
-import { toast } from "react-toastify";
 
 interface IApplicationLog {
     id: number;
@@ -45,10 +44,6 @@ class ApplicationLogService extends BaseHttpService {
                 },
             }),
             catch: (error) => {
-                catchErrors(error, (e, m) => {
-                    toast.error(m)
-                })
-
                 return error
             }
         }))
@@ -97,11 +92,6 @@ class ApplicationLogService extends BaseHttpService {
             api: env,
             href: `/api/application-log/clear`
         });
-
-        response.then(() => {
-            toast.success("Logs cleared successfully");
-        });
-
         return response;
     }
 }

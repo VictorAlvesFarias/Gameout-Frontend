@@ -15,6 +15,7 @@ import { USER_ROUTES } from '../../../config/routes-config';
 import Span from '../../../components/Span';
 import Form from '../../../components/Form';
 import Div from '../../../components/div';
+import { toast } from 'react-toastify';
 
 interface SignupSchema {
   name: string;
@@ -49,9 +50,7 @@ function Signup() {
   });
 
   function handleSignUp(data: SignupSchema) {
-    return signupService.signupPost(data).then(() => {
-      setSuccess(true);
-    });
+    return signupService.signupPost(data)
   }
 
   return (
@@ -113,7 +112,7 @@ function Signup() {
                           <Span variation='error'>{formState.errors.passwordConfirm?.message}</Span>
                         </InputRoot>
                         <div className='mt-5 w-full'>
-                          <Button loadingComponent={<LoaderCircle className={"rotating-div"} />} variation='default-full' loading={!finished}>
+                          <Button loadingComponent={<LoaderCircle className={"rotating-div"} />} className='w-full' loading={!finished}>
                             Create
                           </Button>
                         </div>

@@ -136,7 +136,7 @@ function InProcessing() {
         <InputText onChange={handleFilter} type="text" placeholder='Search files in processing' variation='ultra-rounded' />
         <div className='flex-1 justify-end flex'>
           <div className='w-11 h-11'>
-            <Button onClick={handleGetSaves} variation='default-full'>
+            <Button onClick={handleGetSaves} className='w-full'>
               <RefreshCcw className='h-4 w-4' />
             </Button>
           </div>
@@ -145,12 +145,12 @@ function InProcessing() {
 
       <If conditional={handleStoredFileFilter().length === 0 && allRequestsResolved}>
         <div className='h-full w-full flex justify-center items-center text-white'>
-          <div className='text-center'>
-            <Span>No files in processing</Span>
+          <div className='h-full w-full items-center justify-center flex text-white'>
+            <Span>Results not found</Span>
           </div>
         </div>
       </If>
-      <If conditional={handleStoredFileFilter().length > 0 && allRequestsResolved}>
+      <If conditional={handleStoredFileFilter().length > 0}>
         <div className='space-y-3'>
           {handleStoredFileFilter().map((x, i) => (
             <div key={i} className='pt-3 rounded flex flex-col relative gap-3'>
@@ -203,13 +203,13 @@ function InProcessing() {
                         </div>
                       </Div>
                       <div className='flex gap-3 flex-wrap'>
-                        <Button onClick={() => handleCheckProcessingStatus(x.id)} variation='modal'>
+                        <Button onClick={() => handleCheckProcessingStatus(x.id)} >
                           Check Status
                         </Button>
 
-                        {x.status === 2 && (
+                        {(x.status === 4 || x.status === 5 || x.status === 6) && (
                           <>
-                            <Button variation='modal' onClick={() => handleReprocessFile(x.id)}>
+                            <Button onClick={() => handleReprocessFile(x.id)}>
                               Reprocess
                             </Button>
                             <div className='w-fit'>

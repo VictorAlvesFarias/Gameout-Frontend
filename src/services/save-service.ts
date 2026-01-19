@@ -1,6 +1,5 @@
 import { env } from "../environment";
 import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
-import { toast } from "react-toastify";
 import { AUTH } from "../config/auth-config";
 import { IAppFileRequest } from "../interfaces/IAppFileRequest";
 import { IAppFileResponse } from "../interfaces/IAppFileResponse";
@@ -19,27 +18,6 @@ class SaveService extends BaseHttpService {
                 },
             }),
             catch: (error) => {
-                try {
-                    let errors = error.response.data.errors
-
-                    if (Array.isArray(errors)) {
-                        errors.forEach(e =>
-                            toast.error(e.message)
-                        );
-                    }
-                    else {
-                        const keys = Object.keys(errors);
-                        const values = keys.map((key) => errors[key]);
-
-                        values.flatMap((item) => {
-                            return item.map((error: any) => toast.error(error.message));
-                        });
-                    }
-                }
-                catch {
-                    toast.error("An unexpected error occurred")
-                }
-
                 return error
             }
         }))
@@ -47,11 +25,6 @@ class SaveService extends BaseHttpService {
 
     public async add(data: IAppFileRequest) {
         const result = this.post<IBaseHttpResponseApi<IAppFileResponse>>({ api: env, href: "/upload-file" }, data)
-
-        result.then(() => {
-            toast.success("File added successfully")
-        })
-
         return result;
     }
 
@@ -63,21 +36,11 @@ class SaveService extends BaseHttpService {
 
     public async remove(params: any) {
         const result = this.delete({ api: env, href: "/delete-file", params: params })
-
-        result.then(() => {
-            toast.success("File deleted successfully")
-        })
-
         return result;
     }
 
     public async removeStoredFile(params: any) {
         const result = this.delete({ api: env, href: "/delete-stored-file", params: params })
-
-        result.then(() => {
-            toast.success("Stored file deleted successfully")
-        })
-
         return result;
     }
 
@@ -95,11 +58,6 @@ class SaveService extends BaseHttpService {
 
     public async singleSync(request: IAppFileSyncRequest) {
         const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/single-sync" }, request)
-
-        response.then(() => {
-            toast.success("Sync request sent successfully")
-        })
-
         return response
     }
 
@@ -121,67 +79,39 @@ class SaveService extends BaseHttpService {
             })
 
             if (!response || !response.data) {
-                toast.error("Failed to generate download URL")
-                return
+                throw new Error("Failed to generate download URL")
             }
 
             // Trigger browser native download using signed URL (no auth headers needed)
             window.location.href = response.data
-
-            toast.success("Download started")
         } catch (error) {
             console.error("Download error:", error)
-            toast.error("Failed to download file")
+            throw error
         }
     }
 
     public async reprocessFile(appStoredFileId: number) {
         const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/reprocess-file", params: { appStoredFileId } }, {})
-
-        response.then(() => {
-            toast.success("File marked for reprocessing successfully")
-        })
-
         return response
     }
 
     public async deleteFileWithError(appStoredFileId: number) {
         const response = this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-stored-file", params: { id: appStoredFileId } })
-
-        response.then(() => {
-            toast.success("File with error deleted successfully")
-        })
-
         return response
     }
 
     public async checkProcessingStatus(request: ICheckAppStoredFileStatusRequest) {
         const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/check-stored-file-status" }, request)
-
-        response.then(() => {
-            toast.success("Status check initiated successfully")
-        })
-
         return response
     }
 
     public async checkAppFileStatus(request: ICheckAppFileStatusRequest) {
         const response = this.post<IBaseHttpResponseApi<any>>({ api: env, href: "/check-app-file-status" }, request)
-
-        response.then(() => {
-            toast.success("Status check initiated for file")
-        })
-
         return response
     }
 
     public async deleteSoftDeletedItems() {
         const response = this.delete<IBaseHttpResponseApi<any>>({ api: env, href: "/delete-soft-deleted-items" })
-
-        response.then(() => {
-            toast.success("🗑️ All items from trash have been permanently removed")
-        })
-
         return response
     }
 }

@@ -24,7 +24,6 @@ interface LoginSchema {
 
 function Login() {
   const [rememberMe, setRemeberMe] = useState(localStorage.getItem("remember-me") == "true")
-  const context = useContext(AuthContext)
   const [finished, setQueries] = useQuery(true)
   const navigation = useNavigate()
 
@@ -47,12 +46,8 @@ function Login() {
     setLoading({ ...loading, login: true })
 
     return loginService.loginPost(data)
-      .then(() => {
-        context.setIsAuthenticated?.(true)
+      .then((res) => {
         navigation('/home')
-      })
-      .catch((error) => {
-        console.error('Login error:', error)
       })
       .finally(() => {
         setLoading({ ...loading, login: false })
@@ -90,12 +85,12 @@ function Login() {
                         <Span variation='error'>{formState.errors.password?.message}</Span>
                       </InputRoot>
                       <div className='mt-5 w-full'>
-                        <Button loadingComponent={<LoaderCircle className={"rotating-div"} />} variation='default-full' loading={!finished}>
+                        <Button loadingComponent={<LoaderCircle className={"rotating-div"} />} className='w-full' loading={!finished}>
                           Login
                         </Button>
                       </div>
                       <InputRoot variation='checkbox'>
-                        <Checkbox data={""} value={rememberMe} onChange={handleSetRememberMe}>
+                        <Checkbox data={""} value={rememberMe.toString()} onChange={handleSetRememberMe}>
                           <LucideCheck className='w-3 h-3' />
                         </Checkbox>
                         <Label variation='row'>Keep me logged in</Label>

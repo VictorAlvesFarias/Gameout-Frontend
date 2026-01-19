@@ -1,6 +1,5 @@
 import { env } from "../environment";
 import { BaseHttpService, catchErrors, IBaseHttpResponseApi } from "typescript-toolkit";
-import { toast } from "react-toastify";
 import { AUTH } from "../config/auth-config";
 
 class ApiKeyService extends BaseHttpService {
@@ -13,10 +12,6 @@ class ApiKeyService extends BaseHttpService {
                 },
             }),
             catch: (error) => {
-                catchErrors(error, (e, m) => {
-                    toast.error(m)
-                })
-
                 return error
             }
         }))

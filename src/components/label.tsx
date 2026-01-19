@@ -8,6 +8,6 @@ const labelVariations = {
         <label {...props} className='font-semibold px-1 text-zinc-500 text-sm' />,
 }
 
-const Label =  componentSelector<keyof typeof labelVariations, React.HTMLAttributes<HTMLLabelElement>, "className">(labelVariations)
+const Label =  componentSelector<keyof typeof labelVariations, React.HTMLAttributes<HTMLLabelElement>>(labelVariations)
 
 export default Label

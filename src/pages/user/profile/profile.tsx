@@ -73,6 +73,8 @@ function Profile() {
     return userService.updateUser(updateData).then(() => {
       toast.success('Profile updated successfully!')
       handleGetUser()
+    }).catch(() => {
+      toast.error('Failed to update profile')
     })
   }
 
@@ -120,25 +122,25 @@ function Profile() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <InputRoot>
                     <Label>Name</Label>
-                    <InputText variation='default-full' placeholder="Name" {...registerProfile('name')} />
+                    <InputText className='w-full' placeholder="Name" {...registerProfile('name')} />
                     <Span variation="error">{formStateProfile.errors.name?.message}</Span>
                   </InputRoot>
                   <InputRoot>
                     <Label>Username</Label>
-                    <InputText variation='default-full' placeholder="Username" {...registerProfile('username')} />
+                    <InputText className='w-full' placeholder="Username" {...registerProfile('username')} />
                     <Span variation="error">{formStateProfile.errors.username?.message}</Span>
                   </InputRoot>
                   <div className='sm:col-span-2'>
                     <InputRoot >
                       <Label>Email</Label>
-                      <InputText variation='default-full' placeholder="Email" {...registerProfile('email')} />
+                      <InputText className='w-full' placeholder="Email" {...registerProfile('email')} />
                       <Span variation="error">{formStateProfile.errors.email?.message}</Span>
                     </InputRoot>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center mt-3 flex-wrap gap-4">
-                  <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved}>
+                  <Button className='w-full' loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved}>
                     Save Changes
                   </Button>
                   <div onClick={() => modalRef?.current?.open(true)} className="text-sm text-zinc-400 hover:text-white cursor-pointer transition-colors">
@@ -173,7 +175,7 @@ function Profile() {
                       <Span variation="error">{formStatePassword.errors.confirmPassword?.message}</Span>
                     </InputRoot>
                     <div className="flex gap-3 mt-3">
-                      <Button variation="default-full" loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved} type="submit">
+                      <Button className='w-full' loadingComponent={<LoaderCircle className="rotating-div" />} loading={!allRequestsResolved} type="submit">
                         Save
                       </Button>
                       <ModalClose className='w-full'>

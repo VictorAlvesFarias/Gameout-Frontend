@@ -10,7 +10,6 @@ import { AuthProvider, IAuthContextType, BaseContext, BaseProvider } from 'react
 import { loginService } from './services/login-service';
 import { AUTH } from './config/auth-config';
 import { AuthenticationService } from 'typescript-toolkit'
-import 'react-toastify/dist/ReactToastify.css';
 import { PageProvider } from './contexts/page-context';
 
 function App() {
@@ -59,7 +58,20 @@ function App() {
             token={token ?? null}
             onInit={onInit}
           >
-            <ToastContainer />
+            <ToastContainer
+              // position="bottom-center"
+              autoClose={2000}
+              hideProgressBar
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+              // limit={3}
+              stacked
+            />
             <Routes>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
