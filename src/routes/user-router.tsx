@@ -1,4 +1,4 @@
-import { ListMinus, CircleUser, SwatchBook, LucideMenu, FileText, Settings } from "lucide-react";
+import { CircleUser, SwatchBook, LucideMenu, FileText, Settings } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AuthContext, IAuthContextType } from "react-toolkit";
@@ -19,7 +19,6 @@ import { ModalOpen } from "react-base-components"
 import { ModalClose } from "react-base-components"
 import Button from "../components/button";
 import Home from "../pages/user/home/home";
-import InProcessing from "../pages/user/in-processing/in-processing";
 import Logs from "../pages/user/requests-logs/logs";
 import Profile from "../pages/user/profile/profile";
 import Config from "../pages/user/config/config";
@@ -148,12 +147,6 @@ function UserRouters() {
             <SidebarHref><SwatchBook />Home</SidebarHref>
           </SidebarItem>
           <SidebarItem redirect={() => {
-            navigation(USER_ROUTES.IN_PROCESSING)
-            return USER_ROUTES.IN_PROCESSING
-          }}>
-            <SidebarHref><ListMinus />In processing</SidebarHref>
-          </SidebarItem>
-          <SidebarItem redirect={() => {
             navigation(USER_ROUTES.LOGS)
             return USER_ROUTES.LOGS
           }}>
@@ -200,7 +193,6 @@ function UserRouters() {
               <LoadingContainer />
               <Routes>
                 <Route path={USER_ROUTES.HOME} element={<Home />} />
-                <Route path={USER_ROUTES.IN_PROCESSING} element={<InProcessing />} />
                 <Route path={USER_ROUTES.LOGS} element={<Logs />} />
                 <Route path={USER_ROUTES.PROFILE} element={<Profile />} />
                 <Route path={ADMIN_ROUTES.CONFIG} element={<Config />} />

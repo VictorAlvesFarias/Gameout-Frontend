@@ -25,6 +25,7 @@ function Versions() {
     const [filter, setFilter] = useState<string>("")
     const [allRequestsResolved, setQuery] = useQuery(false)
     const [appFileName, setAppFileName] = useState<string>('')
+    const [appFile, setAppFile] = useState<any>(null)
     const modalRefs = useRef<{ [key: number]: any }>({});
 
     function handleFilter(e: any) {
@@ -32,7 +33,12 @@ function Versions() {
     }
 
     function handleStoredFileFilter() {
-        return storedFiles?.filter(e => (e.name ?? "").includes(filter)) ?? []
+        if (!filter) return storedFiles ?? [];
+
+        return storedFiles?.filter(e => {
+            const dateStr = new Date(e.updateDate).toLocaleString('pt-BR').replace(",", " - ");
+            return dateStr.toLowerCase().includes(filter.toLowerCase());
+        }) ?? []
     }
 
     function handleGetStoredFiles() {
@@ -42,18 +48,15 @@ function Versions() {
 
         const idAppFile = parseInt(id);
 
-        return saveService.getStoredFiles({ idAppFile }).then(e => {
-            setStoredFiles(e.data)
-            if (e.data.length > 0) {
-                saveService.getAll().then(res => {
-                    const appFile = res.data.find((f: any) => f.id === idAppFile);
-
-                    if (appFile) {
-                        setAppFileName(appFile.name);
-                    }
-                })
-            }
-        })
+        return Promise.all([
+            saveService.getStoredFiles({ idAppFile }).then(e => {
+                setStoredFiles(e.data)
+            }),
+            saveService.getFileById({ id: idAppFile }).then(e => {
+                setAppFile(e.data);
+                setAppFileName(e.data.name);
+            })
+        ]);
     }
 
     function handleDeleteStoredFile(storedFileId: number) {
@@ -68,11 +71,16 @@ function Versions() {
     function handleDownload(storedFileId: number) {
         const appStoredFile = storedFiles.find(e => e.id === storedFileId)
 
-        if (!appStoredFile) {
+        if (!appStoredFile || !appFile) {
             return
         }
 
-        saveService.download({ id: storedFileId }, appStoredFile.name)
+        const date = new Date(appStoredFile.updateDate);
+        const formattedDate = date.toISOString().split('T')[0].replace(/-/g, '');
+        const formattedTime = date.toTimeString().split(' ')[0].replace(/:/g, '');
+        const fileName = `${appFile.name}_${formattedDate}_${formattedTime}.zip`;
+
+        saveService.download({ id: storedFileId }, fileName)
             .then(() => {
                 toast.success('Download started')
             })
@@ -120,7 +128,7 @@ function Versions() {
     return (
         <Div variation='in-start' className='bg-zinc-900 bg-opacity-50'>
             <div className='flex gap-3 items-center'>
-                <InputText onChange={handleFilter} type="text" placeholder='Search versions' variation='ultra-rounded' />
+                <InputText onChange={handleFilter} type="text" placeholder='Filter by date' variation='ultra-rounded' />
                 <div className='flex-1 justify-end flex gap-3'>
                     <Button onClick={handleGoBack} variation='default'>
                         Back
@@ -131,8 +139,9 @@ function Versions() {
                 </div>
             </div>
             <If conditional={handleStoredFileFilter().length === 0 && allRequestsResolved}>
-                <div className='h-full w-full items-center justify-center flex text-white'>
-                    <Span>Results not found</Span>
+                <div className='h-full w-full items-center justify-center flex flex-col gap-4 text-white'>
+                    <Span className='text-lg'>No versions found</Span>
+                    <Span className='text-sm text-gray-400'>This file hasn't been synced yet. Click "Sync" to create the first version.</Span>
                 </div>
             </If>
             <If conditional={handleStoredFileFilter().length > 0}>
@@ -174,11 +183,11 @@ function Versions() {
                                                     Are you sure you want to delete this version? This action cannot be undone.
                                                 </p>
                                                 <div className='flex justify-between w-full mt-6 gap-3'>
-                                                    <ModalClose callback={() => handleDeleteStoredFile(x.id)} className='flex justify-between flex-1'>
-                                                        <Button variation="red">Yes, Delete</Button>
+                                                    <ModalClose callback={() => setQuery(() => handleDeleteStoredFile(x.id))} className='flex justify-between flex-1'>
+                                                        <Button className='w-full' variation="red">Yes, Delete</Button>
                                                     </ModalClose>
                                                     <ModalClose className='flex justify-between flex-1'>
-                                                        <Button>Cancel</Button>
+                                                        <Button className='w-full'>Cancel</Button>
                                                     </ModalClose>
                                                 </div>
                                             </div>

@@ -49,7 +49,7 @@ function Config() {
 
     function handleDeleteSoftDeletedItems() {
         setQuery(() => saveService.deleteSoftDeletedItems().then(() => {
-            toast.success('🗑️ Trash emptied successfully!')
+            toast.success('Trash emptied successfully!')
         }).catch(() => {
             toast.error('Failed to empty trash')
         }))

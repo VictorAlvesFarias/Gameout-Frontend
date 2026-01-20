@@ -50,6 +50,12 @@ class SaveService extends BaseHttpService {
         return response
     }
 
+    public async getFileById(params: any) {
+        const response = await this.get<IBaseHttpResponseApi<IAppFileResponse>>({ api: env, href: "/get-file-by-id", params: params })
+
+        return response
+    }
+
     public async getStoredFiles(params: any) {
         const response = await this.get<IBaseHttpResponseApi<IAppStoredFileResponse[]>>({ api: env, href: "/get-stored-files", params: params })
 

@@ -7,7 +7,6 @@ const USER_ROUTES = {
   PROFILE: "/profile",
   LOGIN: "/login",
   SIGNUP: "/signup",
-  IN_PROCESSING: "/in-processing",
   LOGS: "/logs",
   VERSIONS: "/versions/:id",
 };
