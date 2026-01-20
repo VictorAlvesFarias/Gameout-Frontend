@@ -63,6 +63,11 @@ function Config() {
         pageContext.setContextPage({ pageTitle: 'Config' });
     }, [pageContext.setContextPage]);
 
+    useEffect(() => {
+        pageContext.setContextPage({ loading: !finished });
+    }, [finished, pageContext.setContextPage]);
+
+
     return (
         <Div variation="in-center">
             <Div variation='in-center-content' className='bg-zinc-900 bg-opacity-50'>
@@ -86,30 +91,22 @@ function Config() {
                                         {apiKey || 'No API Key configured'}
                                     </code>
                                 </div>
-                                <div className='min-w-11 min-h-11'>
-                                    {apiKey && (
-                                        <Button
-                                            className='w-full'
-                                            onClick={handleGenerateApiKey}
-                                        >
-                                            <RefreshCcw className='h-4 w-4' />
-                                        </Button>
+                                <Button
+                                    className='min-w-11 min-h-11'
+                                    onClick={handleGenerateApiKey}
+                                >
+                                    <RefreshCcw className='h-4 w-4' />
+                                </Button>
+                                <Button
+                                    className='min-w-11 min-h-11'
+                                    onClick={handleCopyToClipboard}
+                                >
+                                    {copied ? (
+                                        <Check className='h-4 w-4' />
+                                    ) : (
+                                        <Copy className='h-4 w-4' />
                                     )}
-                                </div>
-                                <div className='min-w-11 min-h-11'>
-                                    {apiKey && (
-                                        <Button
-                                            className='w-full'
-                                            onClick={handleCopyToClipboard}
-                                        >
-                                            {copied ? (
-                                                <Check className='h-4 w-4' />
-                                            ) : (
-                                                <Copy className='h-4 w-4' />
-                                            )}
-                                        </Button>
-                                    )}
-                                </div>
+                                </Button>
                             </div>
                         </div>
                         <div className='flex border-b border-zinc-700 '></div>
