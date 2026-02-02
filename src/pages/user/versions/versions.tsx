@@ -108,6 +108,19 @@ function Versions() {
         navigate(USER_ROUTES.HOME);
     }
 
+    function getStatusInfo(status: number) {
+        switch (status) {
+            case 1: // Error
+                return { label: 'Error', color: 'text-red-500', bgColor: 'bg-red-500/10' };
+            case 2: // Uploading
+                return { label: 'Uploading', color: 'text-yellow-500', bgColor: 'bg-yellow-500/10' };
+            case 3: // Complete
+                return { label: 'Complete', color: 'text-green-500', bgColor: 'bg-green-500/10' };
+            default:
+                return { label: 'Unknown', color: 'text-gray-500', bgColor: 'bg-gray-500/10' };
+        }
+    }
+
     useEffect(() => {
         if (appFileName == "" || appFileName == null) {
             setContextPage({ pageTitle: `Versions` });
@@ -153,7 +166,13 @@ function Versions() {
                                     <Div variation='accordion-title-root'>
                                         <AccordionTitle>
                                             <Div variation='accordion-content'>
-                                                <div className='flex flex-col'>
+                                                <div className='flex flex-col gap-2'>
+                                                    <div className='flex gap-3 items-center'>
+                                                        <p className='font-bold'>Status:</p>
+                                                        <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusInfo(x.status).bgColor} ${getStatusInfo(x.status).color}`}>
+                                                            {getStatusInfo(x.status).label}
+                                                        </span>
+                                                    </div>
                                                     <div className='flex gap-3'>
                                                         <p className='font-bold'>Version:</p>
                                                         <p>
@@ -196,7 +215,11 @@ function Versions() {
                                     <Accordion>
                                         <Div variation='accordion-content'>
                                             <div className='w-fit'>
-                                                <Button onClick={() => handleDownload(x.id)} >
+                                                <Button 
+                                                    onClick={() => handleDownload(x.id)} 
+                                                    disabled={x.status !== 3}
+                                                    className={x.status !== 3 ? 'opacity-50 cursor-not-allowed' : ''}
+                                                >
                                                     Download
                                                 </Button>
                                             </div>

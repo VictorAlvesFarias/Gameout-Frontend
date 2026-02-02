@@ -170,6 +170,7 @@ function Home() {
   const [appFiles, setAppFiles] = useState<IAppFileResponse[]>([])
   const [filter, setFilter] = useState('')
   const [allRequestsResolved, setQuery] = useQuery(false)
+  const [uploadProgress, setUploadProgress] = useState<{ [key: number]: number }>({})
 
   const modalRefs = useRef<{ [key: number]: any }>({})
   const addModalRef = useRef<any>(null)
@@ -260,14 +261,52 @@ function Home() {
       handleGetSaves()
     }
 
+    function handleUploadProgress(data: any) {
+      console.log('Upload Progress Event:', data)
+
+      const { AppFileId, ProgressPercentage, IsComplete } = data.Body || {}
+
+      console.log('Parsed values:', { AppFileId, ProgressPercentage, IsComplete })
+
+      if (AppFileId === undefined || ProgressPercentage === undefined) {
+        console.warn('Missing required data')
+
+        return
+      }
+
+      setUploadProgress(prev => {
+        const updated = {
+          ...prev,
+          [AppFileId]: ProgressPercentage
+        }
+        console.log('Updated progress state:', updated)
+        return updated
+      })
+
+      if (IsComplete) {
+        console.log('Upload completed for AppFileId:', AppFileId)
+
+        setTimeout(() => {
+          setUploadProgress(prev => {
+            const newProgress = { ...prev }
+            delete newProgress[AppFileId]
+            console.log('Cleared progress for AppFileId:', AppFileId)
+            return newProgress
+          })
+        }, 2000)
+      }
+    }
+
     webSocketService.on('NewsFilesRequestPing', refresh)
     webSocketService.on('AppFileUpdatedPing', refresh)
     webSocketService.on('AppFileStatusUpdatePing', refresh)
+    webSocketService.on('AppFileUploadProgress', handleUploadProgress)
 
     return () => {
       webSocketService.off('NewsFilesRequestPing', refresh)
       webSocketService.off('AppFileUpdatedPing', refresh)
       webSocketService.off('AppFileStatusUpdatePing', refresh)
+      webSocketService.off('AppFileUploadProgress', handleUploadProgress)
     }
   }, [])
 
@@ -338,14 +377,31 @@ function Home() {
                 <Div variation='accordion-title-root'>
                   <AccordionTitle>
                     <Div variation='accordion-content'>
-                      <AppFileItem
-                        name={x.name}
-                        createDate={x.createDate}
-                        updateDate={x.updateDate}
-                        processing={false}
-                        message={x.statusMessage}
-                        status={x.status}
-                      />
+                      <div className='flex flex-col gap-3'>
+                        <AppFileItem
+                          name={x.name}
+                          createDate={x.createDate}
+                          updateDate={x.updateDate}
+                          processing={false}
+                          message={x.statusMessage}
+                          status={x.status}
+                        />
+                        {x.status == 2 && (
+                          <div className='w-full flex flex-col gap-2'>
+                            <div className='flex justify-between text-xs text-zinc-400'>
+                              {uploadProgress[x.id] > 0 ? <span>Fazendo upload</span> : <span>Buscando informações</span>}
+                              {uploadProgress[x.id] > 0 && <span>{uploadProgress[x.id]}%</span>}
+                            </div>
+                            <div className='w-full bg-zinc-700 rounded-full h-2'>
+                              <div
+                                aria-busy={uploadProgress[x.id] == null}
+                                className='bg-blue-500 h-2 rounded-full transition-all duration-300 aria-busy:animate-pulse aria-busy:bg-gray-300'
+                                style={{ width: `${uploadProgress[x.id]}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </Div>
                   </AccordionTitle>
                   <Span

@@ -45,28 +45,11 @@ function AppFileItem(x: {
         return ""
     }
 
-    function getStatusMessage(message?: string, status?: number): string {
-        // Se a mensagem vier do backend e não for um número, usa ela
-        if (message && isNaN(Number(message))) {
-            return message;
-        }
-
-        // Caso contrário, gera a mensagem baseada no status
-        switch (status) {
-            case 1: return 'Pending';
-            case 2: return 'Items in processing';
-            case 3: return 'Synced';
-            case 4: return 'Unsynced';
-            case 5: return 'Path not founded';
-            default: return message || '';
-        }
-    }
-
     return (
         <div className='flex flex-col gap-1'>
             {(x.message || x.status) &&
                 <span className={`text-xs py-1 rounded ${getProcessingStatusColor(x.status)} bg-opacity-20`}>
-                    {getStatusMessage(x.message, x.status)}
+                    {x.message}
                 </span>
             }
             <div className='flex items-center gap-3'>
